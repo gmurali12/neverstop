@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.tgi.nerverstop.common.CommonUtilities;
 import com.tgi.neverstop.controller.UserController;
 import com.tgi.neverstop.model.Role;
 import com.tgi.neverstop.model.RoleName;
@@ -34,6 +35,8 @@ public class UserManagerImpl {
 
 	@Autowired
 	PasswordEncoder encoder;
+
+	CommonUtilities utilities;	
 
 	public List<User> getAllUsers() {
 
@@ -100,6 +103,10 @@ public class UserManagerImpl {
 							() -> new RuntimeException(
 									"Fail! -> Cause: User Role not find."));
 			roles.add(userRole);
+		}
+		if(user.getId()==null) {
+			utilities= new CommonUtilities();
+			user.setId(utilities.generateRandomUUID());
 		}
 		user.setPassword(encoder.encode(user.getPassword()));
 		user.setRoles(roles);

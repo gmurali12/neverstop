@@ -66,7 +66,6 @@ public class LoginManagerImpl {
 		try {
 
 			logger.info("validatePassword:" + password);
-
 			if (!encoder.matches(password, user.getPassword())) {
 				throw new NeverStopExcpetion(
 						"Invalid Username Or Password.");

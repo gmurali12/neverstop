@@ -6,8 +6,6 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -31,8 +29,7 @@ import org.hibernate.annotations.NaturalId;
 })
 public class User {
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @NotBlank
     @Size(min=3, max = 50)
@@ -51,6 +48,8 @@ public class User {
     @NotBlank
     @Size(min=6, max = 100)
     private String password;
+    
+    private String deviceId;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", 
@@ -60,13 +59,15 @@ public class User {
 
     public User() {}
 
-    public User(String name, String username, String email, String password,
-    		String createdDate, boolean active) {
+    public User(String id, String name, String username, String email, String password,
+    		String createdDate, boolean active,String deviceId) {
+    	this.id=id;
         this.name = name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.active = active;
+        this.deviceId=deviceId;
     }
     
     private boolean active;
@@ -90,11 +91,11 @@ public class User {
 		this.registerDate = registerDate;
 	}
 
-	public Long getId() {
+	public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -137,4 +138,19 @@ public class User {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
+	/**
+	 * @return the deviceId
+	 */
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	/**
+	 * @param deviceId the deviceId to set
+	 */
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
+	}
+    
 }

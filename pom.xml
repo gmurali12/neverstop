@@ -102,6 +102,11 @@
 		</dependency>
 		
 		<dependency>
+    		<groupId>com.fasterxml.uuid</groupId>
+    		<artifactId>java-uuid-generator</artifactId>
+    		<version>3.1.4</version>
+		</dependency>
+		<dependency>
 		   <groupId>org.bytedeco</groupId>
 		   <artifactId>javacv</artifactId>
 		   <version>0.8</version>
@@ -113,7 +118,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
+				</plugin>
 		</plugins>
 	</build>
 

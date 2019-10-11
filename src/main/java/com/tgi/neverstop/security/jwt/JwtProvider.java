@@ -9,6 +9,8 @@ import io.jsonwebtoken.UnsupportedJwtException;
 
 import java.util.Date;
 
+import javax.xml.bind.DatatypeConverter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,8 @@ public class JwtProvider {
     
     public boolean validateJwtToken(String authToken) {
         try {
+        	System.out.println("Token>>>>"+jwtSecret);
+        	System.out.println("Test>>>"+authToken);
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
             return true;
         } catch (SignatureException e) {
