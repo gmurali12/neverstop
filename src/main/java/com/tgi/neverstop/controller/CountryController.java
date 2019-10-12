@@ -24,7 +24,7 @@ import com.tgi.neverstop.model.ResponseVO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/country")
+@RequestMapping("/country")
 public class CountryController extends BaseController {
 
 	public static final Logger logger = LoggerFactory

@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.ContinentManagerImpl;
 import com.tgi.neverstop.model.Continent;
-import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.model.ResponseVO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/continent")
+@RequestMapping("/continent")
 public class ContinentController extends BaseController {
 
 	public static final Logger logger = LoggerFactory

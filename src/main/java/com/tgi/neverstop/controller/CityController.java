@@ -20,12 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.CityManagerImpl;
 import com.tgi.neverstop.model.City;
-import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.model.ResponseVO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/city")
+@RequestMapping("/city")
 public class CityController extends BaseController {
 
 	public static final Logger logger = LoggerFactory

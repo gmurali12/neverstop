@@ -23,7 +23,7 @@ import com.tgi.neverstop.model.User;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserController extends BaseController {
 
 	public static final Logger logger = LoggerFactory

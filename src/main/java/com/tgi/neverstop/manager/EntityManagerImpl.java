@@ -54,7 +54,7 @@ public class EntityManagerImpl {
 
 		try {
 			utilities= new CommonUtilities();
-			entity.setEntity_id(utilities.generateRandomUUID());
+			entity.setId(utilities.generateRandomUUID());
 			entity = entityRepository.save(entity);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

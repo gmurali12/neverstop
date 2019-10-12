@@ -18,14 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tgi.nerverstop.common.CommonUtilities;
 import com.tgi.neverstop.manager.EntityManagerImpl;
 import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.model.ResponseVO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/auth/entity")
+@RequestMapping("/entity")
 public class EntityController extends BaseController {
 
 	public static final Logger logger = LoggerFactory
