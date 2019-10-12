@@ -1,43 +1,78 @@
 package com.tgi.neverstop.model;
 
+import java.io.Serializable;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "entity")
-public class EntityVO extends BaseVO {
+public class EntityVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Id
+	@Column(name = "id")
+	private String id;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@Column(name = "entity_name")
 	private String entityName;
 
+	@Column(name = "entity_status")
 	private int entityStatus;
 
+	@Column(name = "phone")
 	private String phone;
 
+	@Column(name = "email")
 	private String email;
 
+	@Column(name = "address1")
 	private String address1;
 
+	@Column(name = "address2")
 	private String address2;
 
+	@Column(name = "city")
 	private String city;
 
+	@Column(name = "state")
 	private String state;
 
+	@Column(name = "country")
 	private String country;
 
+	@Column(name = "zipcode")
 	private String zipcode;
 
+	@Column(name = "profile_image")
 	private String profileImage;
 
+	@Column(name = "thumb_image")
 	private String thumbImage;
 
+	@Column(name = "latitude")
 	private String latitude;
 
+	@Column(name = "longtitude")
 	private String longitude;
 
+	@Column(name = "image_path")
 	private String imagePath;
+
+	public EntityVO() {
+
+	}
 
 	public String getEntityName() {
 		return entityName;

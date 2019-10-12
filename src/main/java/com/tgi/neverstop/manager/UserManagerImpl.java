@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.tgi.nerverstop.common.CommonUtilities;
+import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.controller.UserController;
 import com.tgi.neverstop.model.Role;
 import com.tgi.neverstop.model.RoleName;
@@ -106,7 +106,7 @@ public class UserManagerImpl {
 		}
 		if(user.getId()==null) {
 			utilities= new CommonUtilities();
-			user.setId(utilities.generateRandomUUID());
+			user.setId(CommonUtilities.generateRandomUUID());
 		}
 		user.setPassword(encoder.encode(user.getPassword()));
 		user.setRoles(roles);

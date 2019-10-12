@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.tgi.neverstop.model.Continent;
 
 @Repository
-public interface ContinentRepository extends JpaRepository<Continent, Long> {
+public interface ContinentRepository extends JpaRepository<Continent, String> {
 
 }

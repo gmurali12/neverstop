@@ -76,7 +76,7 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			List<City> cityList = cityManager.getCityByCountryId(Long.valueOf(countryId));
+			List<City> cityList = cityManager.getCityByCountryId(countryId);
 			
 			responseObjectsMap.put("CityList", cityList);
 		} catch (RuntimeException re) {
@@ -173,7 +173,7 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			City city = cityManager.findById(Long.parseLong(cityId));
+			City city = cityManager.findById(cityId);
 			responseObjectsMap.put("CityVO", city);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

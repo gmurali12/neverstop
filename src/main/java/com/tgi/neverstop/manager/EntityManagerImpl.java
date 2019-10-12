@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tgi.nerverstop.common.CommonUtilities;
+import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.repository.EntityRepository;
 
@@ -53,8 +53,9 @@ public class EntityManagerImpl {
 		logger.info(METHOD_NAME + "start : ");
 
 		try {
-			utilities= new CommonUtilities();
-			entity.setId(utilities.generateRandomUUID());
+			if(entity.getId() !=null ){
+				entity.setId(CommonUtilities.generateRandomUUID());
+			}
 			entity = entityRepository.save(entity);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -70,7 +71,7 @@ public class EntityManagerImpl {
 
 	}
 
-	public EntityVO findById(long entityId) {
+	public EntityVO findById(String entityId) {
 
 		String METHOD_NAME = "findById()";
 		logger.info(METHOD_NAME + "start : ");

@@ -140,7 +140,7 @@ public class ContinentController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			Continent continent = continentManager.findById(Long.parseLong(id));
+			Continent continent = continentManager.findById(id);
 			responseObjectsMap.put("ContinentVO", continent);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

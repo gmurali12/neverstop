@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.tgi.neverstop.model.EntityVO;
 
 @Repository
-public interface EntityRepository extends JpaRepository<EntityVO, Long> {
+public interface EntityRepository extends JpaRepository<EntityVO, String> {
 
 }

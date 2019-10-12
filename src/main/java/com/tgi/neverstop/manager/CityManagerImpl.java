@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.model.City;
 import com.tgi.neverstop.repository.CityRepository;
 
@@ -26,6 +27,9 @@ public class CityManagerImpl {
 
 		try {
 
+			if(city.getId() !=null ){
+				city.setId(CommonUtilities.generateRandomUUID());
+			}
 			city = cityRepository.save(city);
 
 		} catch (RuntimeException re) {
@@ -64,7 +68,7 @@ public class CityManagerImpl {
 		return cityList;
 	}
 	
-	public List<City> getCityByCountryId(Long countryId) {
+	public List<City> getCityByCountryId(String countryId) {
 		String METHOD_NAME = "getCityByCountryId()";
 		logger.info(METHOD_NAME + "start : ");
 		List<City> cityList= null;
@@ -86,7 +90,7 @@ public class CityManagerImpl {
 		return cityList;
 	}
 
-	public City findById(long cityId) {
+	public City findById(String cityId) {
 		String METHOD_NAME = "findById()";
 		logger.info(METHOD_NAME + "start : ");
 

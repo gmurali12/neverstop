@@ -144,7 +144,7 @@ public class EntityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			EntityVO entity = entityManager.findById(Long.parseLong(entityId));
+			EntityVO entity = entityManager.findById(entityId);
 			responseObjectsMap.put("EntityVO", entity);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

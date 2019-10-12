@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.repository.ContinentRepository;
@@ -27,6 +28,9 @@ public class ContinentManagerImpl {
 
 		try {
 
+			if(continent.getId() !=null ){
+				continent.setId(CommonUtilities.generateRandomUUID());
+			}
 			continent = continentRepository.save(continent);
 
 		} catch (RuntimeException re) {
@@ -65,7 +69,7 @@ public class ContinentManagerImpl {
 		return contList;
 	}
 
-	public Continent findById(Long continentId) {
+	public Continent findById(String continentId) {
 		String METHOD_NAME = "findById()";
 		logger.info(METHOD_NAME + "start : ");
 

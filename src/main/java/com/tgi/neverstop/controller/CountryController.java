@@ -81,7 +81,7 @@ public class CountryController extends BaseController {
 			if (continentId != null) {
 
 				List<Country> countryList = countryManager
-						.getCountryByContinentId(Long.parseLong(continentId));
+						.getCountryByContinentId(continentId);
 				responseObjectsMap.put("CountryList", countryList);
 			} else {
 				throw new Exception("Invalid Request.");
@@ -179,7 +179,7 @@ public class CountryController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			Country country = countryManager.findById(Long.parseLong(countryId));
+			Country country = countryManager.findById(countryId);
 			responseObjectsMap.put("CountryVO", country);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

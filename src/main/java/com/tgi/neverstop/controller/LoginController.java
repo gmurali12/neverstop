@@ -125,7 +125,7 @@ public class LoginController extends BaseController {
 			responseObjectsMap.put("UserVO", user);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = re.getMessage();
+			msg = "Unable to register user.";
 		} catch (Throwable e) {
 			msg = "Unable to register user.";
 			logger.error(e.getMessage());

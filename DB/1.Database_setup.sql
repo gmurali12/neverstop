@@ -21,107 +21,137 @@ USE `neverstop`;
 DROP TABLE IF EXISTS `city`;
 
 CREATE TABLE `city` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `city_name` varchar(25) DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '1',
-  `country_id` int(11) NOT NULL,
+  `id` varchar(255) NOT NULL,
+  `city_name` varchar(25) NOT NULL,
+  `country_id` varchar(255) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKdjnk44fptegbsu6drhc9xvlfj` (`city_name`),
-  KEY `country_fk` (`country_id`),
-  CONSTRAINT `country_fk` FOREIGN KEY (`country_id`) REFERENCES `country` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  KEY `city_country_id` (`country_id`),
+  CONSTRAINT `city_country_id` FOREIGN KEY (`country_id`) REFERENCES `city` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `city` */
 
 /*Table structure for table `continent` */
 
 DROP TABLE IF EXISTS `continent`;
 
 CREATE TABLE `continent` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `continent_name` varchar(25) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '1',
+  `id` varchar(255) NOT NULL,
+  `continent_name` varchar(25) NOT NULL,
+  `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKfj51n6jbvqc0vst21uu75dbho` (`continent_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `continent` */
 
 /*Table structure for table `country` */
 
 DROP TABLE IF EXISTS `country`;
 
 CREATE TABLE `country` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `country_name` varchar(25) DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT '1',
-  `continent_id` int(11) DEFAULT NULL,
+  `id` varchar(255) NOT NULL,
+  `continent_id` varchar(255) DEFAULT NULL,
+  `country_name` varchar(25) NOT NULL,
+  `status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKqrkn270121aljmucrdbnmd35p` (`country_name`),
-  KEY `continent_fk` (`continent_id`),
-  CONSTRAINT `continent_fk` FOREIGN KEY (`continent_id`) REFERENCES `continent` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+  KEY `country_continent_fk` (`continent_id`),
+  CONSTRAINT `country_continent_fk` FOREIGN KEY (`continent_id`) REFERENCES `continent` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `country` */
+
+/*Table structure for table `entity` */
+
+DROP TABLE IF EXISTS `entity`;
+
+CREATE TABLE `entity` (
+  `id` varchar(255) NOT NULL,
+  `address1` varchar(255) DEFAULT NULL,
+  `address2` varchar(255) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `entity_name` varchar(255) DEFAULT NULL,
+  `entity_status` int(11) DEFAULT NULL,
+  `image_path` varchar(255) DEFAULT NULL,
+  `latitude` varchar(255) DEFAULT NULL,
+  `longtitude` varchar(255) DEFAULT NULL,
+  `phone` varchar(255) DEFAULT NULL,
+  `profile_image` varchar(255) DEFAULT NULL,
+  `state` varchar(255) DEFAULT NULL,
+  `thumb_image` varchar(255) DEFAULT NULL,
+  `zipcode` varchar(255) DEFAULT NULL,
+  `userId` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `entity_user_fk` (`userId`),
+  CONSTRAINT `entity_user_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `entity` */
 
 /*Table structure for table `roles` */
 
 DROP TABLE IF EXISTS `roles`;
 
 CREATE TABLE `roles` (
-  `Id` int(11) NOT NULL,
-  `Name` varchar(50) NOT NULL,
-  PRIMARY KEY (`Id`),
-  UNIQUE KEY `UK_nb4h0p6txrmfc0xbrd1kglp9t` (`Name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(60) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_nb4h0p6txrmfc0xbrd1kglp9t` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+/*Data for the table `roles` */
+
+insert  into `roles`(`id`,`name`) values 
+(1,'ROLE_ADMIN'),
+(2,'ROLE_USER');
 
 /*Table structure for table `user_roles` */
 
 DROP TABLE IF EXISTS `user_roles`;
 
 CREATE TABLE `user_roles` (
-  `user_id` bigint(20) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
   `role_id` bigint(20) NOT NULL,
   PRIMARY KEY (`user_id`,`role_id`),
   KEY `FKh8ciramu9cc9q3qcqiv4ue8a6` (`role_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+/*Data for the table `user_roles` */
+
+insert  into `user_roles`(`user_id`,`role_id`) values 
+('00bdadc2-692c-47cb-bdad-c2692c97cbd9',1),
+('0ee0ac63-3958-487f-a0ac-633958987fb0',2),
+('732eb5f3-fecd-41d3-aeb5-f3fecd81d39a',2);
 
 /*Table structure for table `users` */
 
 DROP TABLE IF EXISTS `users`;
 
 CREATE TABLE `users` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `id` varchar(255) NOT NULL,
+  `active` bit(1) NOT NULL,
+  `device_id` varchar(255) DEFAULT NULL,
   `email` varchar(50) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `password` varchar(100) DEFAULT NULL,
+  `register_date` datetime DEFAULT NULL,
   `username` varchar(50) DEFAULT NULL,
-  `active` tinyint(1) DEFAULT '0',
-  `register_date` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKr43af9ap4edm43mmtq01oddj6` (`username`),
   UNIQUE KEY `UK6dotkott2kjsp8vw4d0m25fb7` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=50 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+/*Data for the table `users` */
 
-DROP TABLE IF EXISTS `entity`;
-
-CREATE TABLE `entity` (
-  `entity_id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `entity_name` varchar(50) DEFAULT NULL,
-  `phone` varchar(100) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `website` varchar(100) DEFAULT NULL,
-  `address1` varchar(100) DEFAULT NULL,
-  `address2` varchar(100) DEFAULT NULL,
-  `city` varchar(100) DEFAULT NULL,
-  `state` varchar(100) DEFAULT NULL,
-  `country` varchar(100) DEFAULT NULL,
-  `zipcode` varchar(100) DEFAULT NULL,
-  `profile_image` varchar(100) DEFAULT NULL,
-  `thumb_image` varchar(100) DEFAULT NULL,
-  `latitude` varchar(100) DEFAULT NULL,
-  `longitude` varchar(100) DEFAULT NULL,
-  `img_path` varchar(100) DEFAULT NULL,
-  `status` tinyint(1) DEFAULT '0',
-  `create_by'int(11),
-  `create_date` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`entity_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=50 DEFAULT CHARSET=latin1;
+insert  into `users`(`id`,`active`,`device_id`,`email`,`name`,`password`,`register_date`,`username`) values 
+('00bdadc2-692c-47cb-bdad-c2692c97cbd9','',NULL,'neverstop.tgi@gmail.com','Admin','$2a$10$Wwzsgnu9PipONtMcY7FD5uAEU.DbksA6aURfHRGjw/IthJgDP9vty','2019-10-12 21:02:11','admin'),
+('0ee0ac63-3958-487f-a0ac-633958987fb0','',NULL,'murali@gmail.com','Murali','$2a$10$ZUHCoWj9dICUDR1lHZEt1ekm9DfoPoL4ZlyrG7Gpiy0ALwrGvkXMG','2019-10-12 21:02:39','murali'),
+('732eb5f3-fecd-41d3-aeb5-f3fecd81d39a','',NULL,'anand@gmail.com','Anand','$2a$10$UQ4tbvqmmyv.KNNgKhU32OayUa6ir/p8BNDCYnOmIS3cmQ4YoPNOy','2019-10-12 21:04:41','anand');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

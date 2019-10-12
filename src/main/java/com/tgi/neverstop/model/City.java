@@ -1,9 +1,9 @@
 package com.tgi.neverstop.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
@@ -14,11 +14,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "city", uniqueConstraints = { @UniqueConstraint(columnNames = { "city_name" }) })
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class City {
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public class City implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@Column(name = "id")
+	private String id;
 
 	@NotBlank
 	@Size(min = 3, max = 25)
@@ -34,11 +37,11 @@ public class City {
 	public City() {
 	}
 
-	public Long getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
