@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.model.City;
 import com.tgi.neverstop.repository.CityRepository;
+import com.tgi.neverstop.util.CommonUtilities;
 
 @Service
 public class CityManagerImpl {
@@ -27,7 +27,7 @@ public class CityManagerImpl {
 
 		try {
 
-			if(city.getId() !=null ){
+			if(city.getId() ==null ){
 				city.setId(CommonUtilities.generateRandomUUID());
 			}
 			city = cityRepository.save(city);

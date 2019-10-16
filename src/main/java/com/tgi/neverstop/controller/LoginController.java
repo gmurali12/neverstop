@@ -141,5 +141,39 @@ public class LoginController extends BaseController {
 		}
 
 	}
+	
+	@PostMapping("/forgetPassword")
+	public ResponseEntity<?> forgetPassword(@RequestParam String username) {
+
+		String METHOD_NAME = "registerUser()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		String resMsg=null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+
+		try {
+			resMsg=userManager.forgetPassword(username);
+			responseObjectsMap.put("UserVO", resMsg);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = "Unable to register user.";
+		} catch (Throwable e) {
+			msg = "Unable to register user.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+
 
 }

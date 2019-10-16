@@ -69,6 +69,10 @@ public class EntityVO implements Serializable {
 
 	@Column(name = "image_path")
 	private String imagePath;
+	
+	@Column(name = "description")
+	private String description;
+
 
 	public EntityVO() {
 
@@ -194,4 +198,19 @@ public class EntityVO implements Serializable {
 		this.imagePath = imagePath;
 	}
 
+	/**
+	 * @return the description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * @param description the description to set
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	
 }

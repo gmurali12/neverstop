@@ -3,6 +3,7 @@ package com.tgi.neverstop.manager;
 import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -13,13 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.controller.UserController;
+import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Role;
 import com.tgi.neverstop.model.RoleName;
 import com.tgi.neverstop.model.User;
 import com.tgi.neverstop.repository.RoleRepository;
 import com.tgi.neverstop.repository.UserRepository;
+import com.tgi.neverstop.util.CommonUtilities;
 
 @Service
 public class UserManagerImpl {
@@ -36,7 +38,8 @@ public class UserManagerImpl {
 	@Autowired
 	PasswordEncoder encoder;
 
-	CommonUtilities utilities;	
+	@Autowired
+	CommonUtilities commonUtil;	
 
 	public List<User> getAllUsers() {
 
@@ -105,8 +108,8 @@ public class UserManagerImpl {
 			roles.add(userRole);
 		}
 		if(user.getId()==null) {
-			utilities= new CommonUtilities();
-			user.setId(CommonUtilities.generateRandomUUID());
+		
+			user.setId(commonUtil.generateRandomUUID());
 		}
 		user.setPassword(encoder.encode(user.getPassword()));
 		user.setRoles(roles);
@@ -139,4 +142,24 @@ public class UserManagerImpl {
 		logger.info(METHOD_NAME + "End: ");
 		return user;
 	}
+	
+	public String forgetPassword(String userName) throws NeverStopExcpetion 
+	{
+		String resMsg=null;
+		String METHOD_NAME = "forgetPassword()";
+		logger.info(METHOD_NAME + "start : ");
+		
+		Optional<User> userDetail = userRepository.findByUsername(userName);
+		if (userDetail != null && userDetail.isPresent())
+		{
+			User user = userDetail.get();
+			commonUtil.generateforgetPwdMail(user.getEmail(),user.getPassword());
+		} else {
+			throw new NeverStopExcpetion("Invalid Username");
+		}
+		logger.info(METHOD_NAME + "END");
+		
+		return resMsg;
+	}
+	
 }

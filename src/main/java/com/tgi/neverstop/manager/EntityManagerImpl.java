@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.repository.EntityRepository;
+import com.tgi.neverstop.util.CommonUtilities;
 
 @Service
 public class EntityManagerImpl {
@@ -53,7 +53,7 @@ public class EntityManagerImpl {
 		logger.info(METHOD_NAME + "start : ");
 
 		try {
-			if(entity.getId() !=null ){
+			if(entity.getId() ==null ){
 				entity.setId(CommonUtilities.generateRandomUUID());
 			}
 			entity = entityRepository.save(entity);

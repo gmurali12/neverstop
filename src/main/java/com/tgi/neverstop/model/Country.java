@@ -32,16 +32,16 @@ public class Country implements Serializable {
 	private int status;
 
 	@Column(name = "continent_id")
-	private Long continentId;
+	private String continentId;
 
 	public Country() {
 	}
 
-	public Long getContinentId() {
+	public String getContinentId() {
 		return continentId;
 	}
 
-	public void setContinentId(Long continentId) {
+	public void setContinentId(String continentId) {
 		this.continentId = continentId;
 	}
 

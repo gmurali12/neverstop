@@ -32,7 +32,7 @@ public class City implements Serializable {
 	private int status;
 
 	@Column(name = "country_id")
-	private Long countryId;
+	private String countryId;
 
 	public City() {
 	}
@@ -53,11 +53,11 @@ public class City implements Serializable {
 		this.cityName = cityName;
 	}
 
-	public Long getCountryId() {
+	public String getCountryId() {
 		return countryId;
 	}
 
-	public void setCountryId(Long countryId) {
+	public void setCountryId(String countryId) {
 		this.countryId = countryId;
 	}
 

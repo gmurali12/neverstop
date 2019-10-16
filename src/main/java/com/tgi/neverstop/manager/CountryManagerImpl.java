@@ -9,9 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.tgi.nerverstop.util.CommonUtilities;
 import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.repository.CountryRepository;
+import com.tgi.neverstop.util.CommonUtilities;
 
 @Service
 public class CountryManagerImpl {
@@ -29,7 +29,7 @@ public class CountryManagerImpl {
 
 		try {
 
-			if(country.getId() !=null ){
+			if(country.getId() ==null ){
 				country.setId(CommonUtilities.generateRandomUUID());
 			}
 			country = countryRepository.save(country);
