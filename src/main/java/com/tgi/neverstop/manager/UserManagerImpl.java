@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -90,7 +91,7 @@ public class UserManagerImpl {
 
 		String METHOD_NAME = "setDefaultValues()";
 		logger.info(METHOD_NAME + "start : ");
-
+		if(user.getId()==null) {
 		Set<Role> roles = new HashSet<>();
 		if (user.getEmail().contains("neverstop")) {
 			logger.info(METHOD_NAME + "...ADMIN user : ");
@@ -107,17 +108,13 @@ public class UserManagerImpl {
 									"Fail! -> Cause: User Role not find."));
 			roles.add(userRole);
 		}
-		if(user.getId()==null) {
-		
 			user.setId(commonUtil.generateRandomUUID());
+			user.setActive(true);
+			long millis = System.currentTimeMillis();
+			Timestamp date = new Timestamp(millis);
+			user.setRegisterDate(date);
 		}
 		user.setPassword(encoder.encode(user.getPassword()));
-		user.setRoles(roles);
-		user.setActive(true);
-		long millis = System.currentTimeMillis();
-		Timestamp date = new Timestamp(millis);
-		user.setRegisterDate(date);
-
 		logger.info(METHOD_NAME + "End: ");
 	}
 
@@ -153,7 +150,11 @@ public class UserManagerImpl {
 		if (userDetail != null && userDetail.isPresent())
 		{
 			User user = userDetail.get();
-			commonUtil.generateforgetPwdMail(user.getEmail(),user.getPassword());
+			String password = new String(commonUtil.geek_Password(8));
+			System.out.println("password>>>>>>"+password);
+			user.setPassword(password);
+			updateUser(user);
+			commonUtil.generateforgetPwdMail(user.getEmail(),password);
 		} else {
 			throw new NeverStopExcpetion("Invalid Username");
 		}

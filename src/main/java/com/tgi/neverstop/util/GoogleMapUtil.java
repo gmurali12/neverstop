@@ -1,4 +1,4 @@
-package com.tgi.nerverstop.util;
+package com.tgi.neverstop.util;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
