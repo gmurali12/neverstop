@@ -10,10 +10,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 
+@Component
 public class GoogleMapUtil {
 
   private String googleApiKey = "AIzaSyA_cdNO7Xl2az-HOhiYjo9LxTiG56N2shY";
@@ -65,16 +67,8 @@ public class GoogleMapUtil {
     return values;
   }
 
-  public static void main(String[] args) {
-    GoogleMapUtil googleMapUtil = new GoogleMapUtil();
-    try {
-      String ab = "Trattoria Trippa,Via Giorgio Vasari, 1, 20135 Milano MI, Italy";
-      googleMapUtil.latLng(ab.replace(" ", "%20"));
-    } catch (NeverStopExcpetion e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
+ /*
+*/
 
   public String getGoogleApiKey() {
     return googleApiKey;

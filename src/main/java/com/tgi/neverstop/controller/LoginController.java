@@ -154,8 +154,8 @@ public class LoginController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			resMsg=userManager.forgetPassword(username);
-			responseObjectsMap.put("UserVO", resMsg);
+			User user=userManager.forgetPassword(username);
+			responseObjectsMap.put("UserVO", user);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			msg = "Unable to register user.";

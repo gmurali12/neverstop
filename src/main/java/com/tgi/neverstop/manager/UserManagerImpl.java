@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.Set;
 
 import javax.validation.Valid;
@@ -140,18 +139,17 @@ public class UserManagerImpl {
 		return user;
 	}
 	
-	public String forgetPassword(String userName) throws NeverStopExcpetion 
+	public User forgetPassword(String userName) throws NeverStopExcpetion 
 	{
 		String resMsg=null;
 		String METHOD_NAME = "forgetPassword()";
 		logger.info(METHOD_NAME + "start : ");
-		
+		User user;
 		Optional<User> userDetail = userRepository.findByUsername(userName);
 		if (userDetail != null && userDetail.isPresent())
 		{
-			User user = userDetail.get();
+			 user = userDetail.get();
 			String password = new String(commonUtil.geek_Password(8));
-			System.out.println("password>>>>>>"+password);
 			user.setPassword(password);
 			updateUser(user);
 			commonUtil.generateforgetPwdMail(user.getEmail(),password);
@@ -160,7 +158,22 @@ public class UserManagerImpl {
 		}
 		logger.info(METHOD_NAME + "END");
 		
-		return resMsg;
+		return user;
+	}
+
+	public User updatePassword(String username, String newPassword) throws NeverStopExcpetion 
+	
+	{ User user=null;
+		Optional<User> userDetail = userRepository.findByUsername(username);
+		if (userDetail != null && userDetail.isPresent())
+		{
+			user = userDetail.get();
+			user.setPassword(encoder.encode(newPassword));
+			updateUser(user);
+		} else {
+			throw new NeverStopExcpetion("Invalid Username");
+		}
+		return user;
 	}
 	
 }

@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.manager.EntityManagerImpl;
 import com.tgi.neverstop.model.EntityVO;
@@ -32,8 +35,7 @@ public class EntityController extends BaseController {
 
 	@Autowired
 	EntityManagerImpl entityManager;
-
-
+	
 	@GetMapping("/getAllEntity")
 	public ResponseEntity<?> getAllEntity() {
 
@@ -67,8 +69,10 @@ public class EntityController extends BaseController {
 	}
 
 	@PostMapping("/saveEntity")
-	public ResponseEntity<?> saveEntity(@Valid @RequestBody EntityVO entity) {
-		System.out.println("EntityVO>>>"+entity.toString());
+	public ResponseEntity<?> saveEntity(@RequestPart EntityVO entity,@RequestPart(value="entityImg", required=false) MultipartFile entityImg, 
+			@RequestPart(value="thumbImg", required=false) MultipartFile thumbImg) {
+		
+		System.out.println("EntityVO>>>"+entity);
 		String METHOD_NAME = "saveEntity()";
 		logger.info(METHOD_NAME + "start : ");
 
@@ -77,7 +81,7 @@ public class EntityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			entity = entityManager.saveEntity(entity);
+			entity = entityManager.saveEntity(entity,entityImg,thumbImg);
 			responseObjectsMap.put("EntityVO", entity);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -102,7 +106,8 @@ public class EntityController extends BaseController {
 	}
 	
 	@PostMapping("/updateEntity")
-	public ResponseEntity<?> updateEntity(@Valid @RequestBody EntityVO entity) {
+	public ResponseEntity<?> updateEntity(@Valid @RequestBody EntityVO entity,@RequestPart(value="entityImg", required=false) MultipartFile entityImg, 
+			@RequestPart(value="thumbImg", required=false) MultipartFile thumbImg) {
 
 		String METHOD_NAME = "updateEntity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -112,7 +117,7 @@ public class EntityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			entity = entityManager.saveEntity(entity);
+			entity = entityManager.updateEntity(entity,entityImg,thumbImg);
 			responseObjectsMap.put("EntityVO", entity);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

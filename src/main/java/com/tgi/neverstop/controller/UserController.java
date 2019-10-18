@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.UserManagerImpl;
@@ -97,4 +98,38 @@ public class UserController extends BaseController {
 		}
 
 	}
+	
+	@PostMapping("/updatePassword")
+	public ResponseEntity<?> forgetPassword(@RequestParam String username,@RequestParam String oldPassword,@RequestParam String newPassword) {
+
+		String METHOD_NAME = "registerUser()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		String resMsg=null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+
+		try {
+			User user=userManager.updatePassword(username,newPassword);
+			responseObjectsMap.put("UserVO", user);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = "Unable to register user.";
+		} catch (Throwable e) {
+			msg = "Unable to register user.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+
 }
