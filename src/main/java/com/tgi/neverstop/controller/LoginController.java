@@ -158,9 +158,9 @@ public class LoginController extends BaseController {
 			responseObjectsMap.put("UserVO", user);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = "Unable to register user.";
+			msg = "Error while setting passwrod.";
 		} catch (Throwable e) {
-			msg = "Unable to register user.";
+			msg = "Error while setting passwrod.";
 			logger.error(e.getMessage());
 		}
 

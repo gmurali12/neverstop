@@ -4,22 +4,35 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import com.fasterxml.uuid.Generators;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
+import com.tgi.neverstop.model.EntityVO;
 
 @Component
 public class CommonUtilities {
@@ -33,6 +46,12 @@ public class CommonUtilities {
 	@Value("${neverstop.app.mail.forgetMailSubject}")
 	private String mailSubject;
 	
+	@Autowired
+    private JavaMailSender emailSender;
+
+    @Autowired
+    private SpringTemplateEngine templateEngine;
+
 	public static String generateRandomUUID() {
 		String METHOD_NAME = "generateRandomUUID";
 		logger.info(METHOD_NAME + "start : ");
@@ -58,7 +77,6 @@ public class CommonUtilities {
 
 	public void generateforgetPwdMail(String mailId, String pwd) {
 		try {
-			System.out.println("Mail Subject>>" + mailSubject);
 			SimpleMailMessage msg = new SimpleMailMessage();
 			msg.setTo(mailId);
 			msg.setSubject(mailSubject + "-Forget Password");
@@ -97,39 +115,123 @@ public class CommonUtilities {
 		return password;
 	}
 
-	@SuppressWarnings("finally")
+	
 	public boolean writeImageFile(MultipartFile file, String filePath)
-			throws NeverStopExcpetion {
-		BufferedOutputStream stream = null; 
-		Boolean isUploaded=false;
-		String fileName=file.getOriginalFilename();
-		 
+			throws NeverStopExcpetion, IOException {
+		BufferedOutputStream stream = null;
+		boolean isUploaded = false;
+		String fileName = file.getOriginalFilename();
+
 		try {
 			File directory = new File(filePath);
-		    if (! directory.exists())
-		    {
-		        directory.mkdir();
-		        // If you require it to make the entire directory path including parents,
-		        // use directory.mkdirs(); here instead.
-		    }
-		    File newFile = new File(filePath+fileName);
+			if (!directory.exists()) {
+				directory.mkdir();
+				// If you require it to make the entire directory path including
+				// parents,
+				// use directory.mkdirs(); here instead.
+			}
+			File newFile = new File(filePath + fileName);
 			byte[] bytes = file.getBytes();
 			stream = new BufferedOutputStream(new FileOutputStream(newFile));
 			stream.write(bytes);
 			stream.flush();
-			isUploaded=true;
+			isUploaded = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NeverStopExcpetion("Failed to upload Image");
 		} finally {
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					throw new NeverStopExcpetion("File Close method fails");
-				}
-			}
-			return isUploaded;
+			stream.close();
 		}
+		return isUploaded;
 	}
+
+	public JSONObject generateGeoJSON(EntityVO entity) {
+
+		JSONObject featureCollection = new JSONObject();
+		try {
+			featureCollection.put("type", "FeatureCollection");
+			JSONObject properties = new JSONObject();
+			properties.put("name", entity.getEntityName());
+			properties.put("hours", "6am - 5pm");
+			properties.put("phone", entity.getPhone());
+			properties.put("description", entity.getDescription());
+			JSONArray features = new JSONArray();
+
+			JSONObject feature = new JSONObject();
+			feature.put("type", "Feature");
+			feature.put("properties", properties);
+			JSONObject geometry = new JSONObject();
+			JSONArray JSONArrayCoord = new JSONArray("[" + entity.getLatitude() + "," + entity.getLongitude()
+					+ "]");
+
+			geometry.put("type", "Point");
+			geometry.put("coordinates", JSONArrayCoord);
+			
+			feature.put("geometry", geometry);
+			features.put(feature);
+			featureCollection.put("features", features);
+
+			// System.out.println(featureCollection.toString());
+			// }
+
+			System.out.println(featureCollection.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return featureCollection;
+	}
+
+	public JSONObject generateGeoJSONList(List<EntityVO> entityList) throws JSONException {
+		JSONObject featureCollection = new JSONObject();
+		featureCollection.put("type", "FeatureCollection");
+		JSONArray features = new JSONArray();
+		try {
+			for(EntityVO entity:entityList){
+				System.out.println("Entity Name::"+entity.getEntityName());
+				
+				JSONObject properties = new JSONObject();
+				properties.put("name", entity.getEntityName());
+				properties.put("hours", "6am - 5pm");
+				properties.put("phone", entity.getPhone());
+				properties.put("description", entity.getDescription());
+				
+				JSONObject geometry = new JSONObject();
+				JSONArray JSONArrayCoord = new JSONArray("[" + entity.getLatitude() + "," + entity.getLongitude()
+						+ "]");
+
+				geometry.put("type", "Point");
+				geometry.put("coordinates", JSONArrayCoord);
+				
+				JSONObject feature = new JSONObject();
+				feature.put("type", "Feature");
+				feature.put("properties", properties);
+				feature.put("geometry", geometry);
+				features.put(feature);
+			}
+			featureCollection.put("features", features);
+			System.out.println(featureCollection.toString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return featureCollection;
+	}
+	
+	public void sendSimpleMessage(String mailId, String pwd) throws MessagingException, IOException {
+        MimeMessage message = emailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message,
+                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+                StandardCharsets.UTF_8.name());
+
+       // helper.addAttachment("logo.png", new ClassPathResource("memorynotfound-logo.png"));
+
+        Context context = new Context();
+      //  context.setVariables(mail.getModel());
+        context.setVariable("Password",pwd );
+        String html = templateEngine.process("/templates/template.html", context);
+
+        helper.setTo(mailId);
+        helper.setText(html, true);
+        helper.setSubject(mailSubject+"-ForgetPassword");
+        emailSender.send(message);
+    }
 }

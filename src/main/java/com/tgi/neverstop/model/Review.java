@@ -1,7 +1,7 @@
 package com.tgi.neverstop.model;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "reviews")
+@Table(name = "review")
 public class Review implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -20,26 +20,23 @@ public class Review implements Serializable {
 
 	@Column(name = "comments")
 	private String comments;
-
-	@Column(name = "like")
-	private int like;
+	
+	@Column(name = "is_like")
+	private int isLike;
 
 	@Column(name = "rating")
 	private int rating;
 
 	@Column(name = "posted_on")
-	private Timestamp postedOn;
+	private Date postedOn;
 
 	@Column(name = "entity_id")
 	private String entityId;
 
 	@Column(name = "user_id")
 	private String userId;
-
-	public Review() {
-
-	}
-
+	
+	
 
 	public String getId() {
 		return id;
@@ -48,90 +45,57 @@ public class Review implements Serializable {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	/**
-	 * @return the comments
-	 */
+
 	public String getComments() {
 		return comments;
 	}
 
-	/**
-	 * @param comments the comments to set
-	 */
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
 
-	/**
-	 * @return the like
-	 */
-	public int getLike() {
-		return like;
+	public int getIsLike() {
+		return isLike;
 	}
 
-	/**
-	 * @param like the like to set
-	 */
-	public void setLike(int like) {
-		this.like = like;
+	public void setIsLike(int isLike) {
+		this.isLike = isLike;
 	}
 
-	/**
-	 * @return the rating
-	 */
 	public int getRating() {
 		return rating;
 	}
 
-	/**
-	 * @param rating the rating to set
-	 */
 	public void setRating(int rating) {
 		this.rating = rating;
 	}
 
-	/**
-	 * @return the postedOn
-	 */
-	public Timestamp getPostedOn() {
+	public Date getPostedOn() {
 		return postedOn;
 	}
 
-	/**
-	 * @param postedOn the postedOn to set
-	 */
-	public void setPostedOn(Timestamp postedOn) {
+	public void setPostedOn(Date postedOn) {
 		this.postedOn = postedOn;
 	}
 
-	/**
-	 * @return the entityId
-	 */
 	public String getEntityId() {
 		return entityId;
 	}
 
-	/**
-	 * @param entityId the entityId to set
-	 */
 	public void setEntityId(String entityId) {
 		this.entityId = entityId;
 	}
 
-	/**
-	 * @return the userId
-	 */
 	public String getUserId() {
 		return userId;
 	}
 
-	/**
-	 * @param userId the userId to set
-	 */
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
+	
+	
 
+	
 }

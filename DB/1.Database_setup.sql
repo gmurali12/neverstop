@@ -86,6 +86,7 @@ CREATE TABLE `entity` (
   `thumb_image` varchar(255) DEFAULT NULL,
   `zipcode` varchar(255) DEFAULT NULL,
   `userId` varchar(255) DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `entity_user_fk` (`userId`),
   CONSTRAINT `entity_user_fk` FOREIGN KEY (`userId`) REFERENCES `users` (`id`)
@@ -157,3 +158,24 @@ insert  into `users`(`id`,`active`,`device_id`,`email`,`name`,`password`,`regist
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+ALTER TABLE `neverstop`.`city` 
+DROP FOREIGN KEY `city_country_id`;
+ALTER TABLE `neverstop`.`city`;
+
+ALTER TABLE `neverstop`.`city` RENAME INDEX `city_country_id` TO `city_country_id_idx`;
+ALTER TABLE `neverstop`.`city` ALTER INDEX `city_country_id_idx` VISIBLE;
+ALTER TABLE `neverstop`.`city` 
+ADD CONSTRAINT `city_country_id`
+  FOREIGN KEY (`country_id`)
+  REFERENCES `neverstop`.`country` (`id`);
+
+  
+ ALTER TABLE `neverstop`.`entity` 
+ADD COLUMN `hours` VARCHAR(45) NULL AFTER `description`;
+
+ALTER TABLE `neverstop`.`review` 
+RENAME TO  `neverstop`.`reviews` ;
+
+ALTER TABLE `neverstop2`.`review` 
+CHANGE COLUMN `like` `like` INT(11) NULL DEFAULT NULL ;

@@ -6,6 +6,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+
 
 @Entity
 @Table(name = "entity")
@@ -46,9 +49,6 @@ public class EntityVO implements Serializable {
 	@Column(name = "city")
 	private String city;
 
-	@Column(name = "state")
-	private String state;
-
 	@Column(name = "country")
 	private String country;
 
@@ -69,10 +69,18 @@ public class EntityVO implements Serializable {
 
 	@Column(name = "image_path")
 	private String imagePath;
-	
+
 	@Column(name = "description")
 	private String description;
 
+	@Column(name = "city_id")
+	private String cityId;
+
+	@Column(name = "hours")
+	private String hours;
+	
+	@Transient
+	private Double ratingCount;
 
 	public EntityVO() {
 
@@ -134,14 +142,6 @@ public class EntityVO implements Serializable {
 		this.city = city;
 	}
 
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
 	public String getCountry() {
 		return country;
 	}
@@ -198,19 +198,38 @@ public class EntityVO implements Serializable {
 		this.imagePath = imagePath;
 	}
 
-	/**
-	 * @return the description
-	 */
 	public String getDescription() {
 		return description;
 	}
 
-	/**
-	 * @param description the description to set
-	 */
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	public String getCityId() {
+		return cityId;
+	}
+
+	public void setCityId(String cityId) {
+		this.cityId = cityId;
+	}
+
+	public String getHours() {
+		return hours;
+	}
+
+	public void setHours(String hours) {
+		this.hours = hours;
+	}
+
+	public Double getRatingCount() {
+		return ratingCount;
+	}
+
+	public void setRatingCount(Double ratingCount) {
+		this.ratingCount = ratingCount;
+	}
 	
+	
+
 }

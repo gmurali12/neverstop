@@ -1,6 +1,5 @@
 package com.tgi.neverstop.manager;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -33,11 +32,17 @@ public class ReviewManagerImpl {
 			if (review.getId() == null) {
 				review.setId(CommonUtilities.generateRandomUUID());
 			}
-			/*
-			 * long millis = System.currentTimeMillis(); Timestamp date = new
-			 * Timestamp(millis); System.out.println("Date>>>>>"+date);
-			 * review.setPostedOn(date);
-			 */
+			review.setPostedOn(CommonUtilities.getCurrentDateTime());
+			System.out.println("review:"+review.getComments());
+			System.out.println("EntityId:"+review.getEntityId());
+
+			System.out.println("Like:"+review.getIsLike());
+
+			System.out.println("Rating:"+review.getRating());
+
+			System.out.println("Userid:"+review.getUserId());
+			System.out.println("Date:"+review.getPostedOn());
+
 			review = reviewRepository.save(review);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

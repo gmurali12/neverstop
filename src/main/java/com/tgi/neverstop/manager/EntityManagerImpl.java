@@ -1,5 +1,6 @@
 package com.tgi.neverstop.manager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.repository.EntityRepository;
+import com.tgi.neverstop.repository.ReviewRepository;
 import com.tgi.neverstop.util.CommonUtilities;
 import com.tgi.neverstop.util.GoogleMapUtil;
 
@@ -23,6 +25,9 @@ public class EntityManagerImpl {
 
 	@Autowired
 	EntityRepository entityRepository;
+	
+	@Autowired
+	ReviewRepository reviewRepository;
 	
 	@Autowired
 	CommonUtilities commonUtil;	
@@ -36,16 +41,23 @@ public class EntityManagerImpl {
 	
 	public static final Logger logger = LoggerFactory.getLogger(EntityManagerImpl.class);
 
+	
 	public List<EntityVO> getAllEntity() {
 
 		String METHOD_NAME = "getAllEntity()";
 		logger.info(METHOD_NAME + "start : ");
 		List<EntityVO> entityList = null;
+		List<EntityVO> entityRatingList = new ArrayList<EntityVO>();
 
 		try {
 
 			entityList = entityRepository.findAll();
-
+			for(EntityVO entity:entityList)
+			{
+				Double rating=reviewRepository.getAvgRatngByEntity(entity.getId());
+				entity.setRatingCount(rating);
+				entityRatingList.add(entity);
+			}
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
@@ -56,7 +68,7 @@ public class EntityManagerImpl {
 
 		}
 		logger.info(METHOD_NAME + "END");
-		return entityList;
+		return entityRatingList;
 
 	}
 
@@ -163,6 +175,8 @@ public class EntityManagerImpl {
 		try {
 
 			entity = entityRepository.getOne(entityId);
+			Double rating=reviewRepository.getAvgRatngByEntity(entity.getId());
+			entity.setRatingCount(rating);
 
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -176,6 +190,35 @@ public class EntityManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return entity;
 
+	}
+	
+	public List<EntityVO> getByCityId(String cityId) {
+		String METHOD_NAME = "getByCityId()";
+		logger.info(METHOD_NAME + "start : ");
+		List<EntityVO> entityList= null;
+		List<EntityVO> entityRatingList= new ArrayList<EntityVO>();
+		try {
+
+			entityList = entityRepository.findByCityId(cityId);
+			for(EntityVO entity:entityList)
+			{
+				Double rating=reviewRepository.getAvgRatngByEntity(entity.getId());
+				entity.setRatingCount(rating);
+				entityRatingList.add(entity);
+			}
+			
+			
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+
+		}
+		logger.info(METHOD_NAME + "END");
+		return entityList;
 	}
 
 }
