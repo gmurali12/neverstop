@@ -177,5 +177,6 @@ ADD COLUMN `hours` VARCHAR(45) NULL AFTER `description`;
 ALTER TABLE `neverstop`.`review` 
 RENAME TO  `neverstop`.`reviews` ;
 
-ALTER TABLE `neverstop2`.`review` 
-CHANGE COLUMN `like` `like` INT(11) NULL DEFAULT NULL ;
+
+ALTER TABLE `neverstop`.`review` 
+CHANGE COLUMN `like` `is_like` INT(11) NULL DEFAULT NULL ;
