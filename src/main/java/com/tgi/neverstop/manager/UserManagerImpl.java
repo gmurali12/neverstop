@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,9 @@ public class UserManagerImpl {
 
 	@Autowired
 	CommonUtilities commonUtil;	
+	
+	@Value("${neverstop.user.exist}")
+	private String userExistErroMsg;
 
 	public List<User> getAllUsers() {
 
@@ -66,22 +70,32 @@ public class UserManagerImpl {
 		return userList;
 	}
 
-	public User saveUser(User user) {
+	public User saveUser(User user) throws NeverStopExcpetion {
 		String METHOD_NAME = "saveUser()";
 		logger.info(METHOD_NAME + "start : ");
+		boolean isUserNameExist=false;
+		boolean isEmailExist=false;
 
 		try {
-
-			setDefaultValues(user);
-			user = userRepository.save(user);
+			isUserNameExist=userRepository.existsByUsername(user.getUsername());
+			isEmailExist=userRepository.existsByEmail(user.getEmail());
+			if(!isUserNameExist || !isEmailExist){
+				setDefaultValues(user);
+				user = userRepository.save(user);
+			}else{
+				throw new NeverStopExcpetion(userExistErroMsg);
+			}
 
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
+			throw new NeverStopExcpetion("Error While Creating user."+re.getMessage());
+		
 
 		} catch (Throwable e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
+			throw new NeverStopExcpetion("Error While Creating user."+e.getMessage());
 
 		}
 		logger.info(METHOD_NAME + "End: ");
@@ -92,8 +106,15 @@ public class UserManagerImpl {
 
 		String METHOD_NAME = "setDefaultValues()";
 		logger.info(METHOD_NAME + "start : ");
-		if(user.getId()==null) {
 		Set<Role> roles = new HashSet<>();
+		if(user.getId()==null) {
+			user.setId(commonUtil.generateRandomUUID());
+			user.setActive(true);
+			long millis = System.currentTimeMillis();
+			Timestamp date = new Timestamp(millis);
+			user.setRegisterDate(date);
+		}
+		
 		if (user.getEmail().contains("neverstop")) {
 			logger.info(METHOD_NAME + "...ADMIN user : ");
 			Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
@@ -109,12 +130,7 @@ public class UserManagerImpl {
 									"Fail! -> Cause: User Role not find."));
 			roles.add(userRole);
 		}
-			user.setId(commonUtil.generateRandomUUID());
-			user.setActive(true);
-			long millis = System.currentTimeMillis();
-			Timestamp date = new Timestamp(millis);
-			user.setRegisterDate(date);
-		}
+		user.setRoles(roles);
 		user.setPassword(encoder.encode(user.getPassword()));
 		logger.info(METHOD_NAME + "End: ");
 	}
@@ -154,7 +170,13 @@ public class UserManagerImpl {
 			String password = new String(commonUtil.geek_Password(8));
 			user.setPassword(password);
 			updateUser(user);
-			commonUtil.generateforgetPwdMail(user.getEmail(),password);
+			//commonUtil.generateforgetPwdMail(user.getEmail(),password);
+			try {
+				commonUtil.sendSimpleMessage(user.getEmail(),password);
+			} catch (MessagingException | IOException e) {
+				e.printStackTrace();
+				throw new NeverStopExcpetion("Error While Sending Email. Pleasse Try Again After Some Time!!!");
+			}
 		} else {
 			throw new NeverStopExcpetion("Invalid Username");
 		}

@@ -5,8 +5,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.City;
 import com.tgi.neverstop.repository.CityRepository;
 import com.tgi.neverstop.util.CommonUtilities;
@@ -20,7 +22,7 @@ public class CityManagerImpl {
 	@Autowired
 	CityRepository cityRepository;
 
-	public City saveCity(City city) {
+	public City saveCity(City city) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveCity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -31,7 +33,10 @@ public class CityManagerImpl {
 				city.setId(CommonUtilities.generateRandomUUID());
 			}
 			city = cityRepository.save(city);
-
+		}catch (DataIntegrityViolationException e) {
+			throw new NeverStopExcpetion("City Name Already Exist");
+		    
+		
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();

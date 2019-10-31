@@ -227,11 +227,11 @@ public class CommonUtilities {
         Context context = new Context();
       //  context.setVariables(mail.getModel());
         context.setVariable("Password",pwd );
-        String html = templateEngine.process("/templates/template.html", context);
+        String html = templateEngine.process("template.html", context);
 
         helper.setTo(mailId);
         helper.setText(html, true);
-        helper.setSubject(mailSubject+"-ForgetPassword");
+        helper.setSubject(mailSubject);
         emailSender.send(message);
     }
 }

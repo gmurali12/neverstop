@@ -5,8 +5,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.repository.ContinentRepository;
@@ -21,7 +23,7 @@ public class ContinentManagerImpl {
 	@Autowired
 	ContinentRepository continentRepository;
 
-	public Continent saveContinent(Continent continent) {
+	public Continent saveContinent(Continent continent) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -32,7 +34,9 @@ public class ContinentManagerImpl {
 				continent.setId(CommonUtilities.generateRandomUUID());
 			}
 			continent = continentRepository.save(continent);
-
+		}catch (DataIntegrityViolationException e) {
+			throw new NeverStopExcpetion("Continent Name Already Exist");
+		    
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();

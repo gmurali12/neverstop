@@ -127,7 +127,7 @@ public class LoginController extends BaseController {
 			logger.error(re.getMessage());
 			msg = "Unable to register user.";
 		} catch (Throwable e) {
-			msg = "Unable to register user.";
+			msg = e.getMessage();
 			logger.error(e.getMessage());
 		}
 
@@ -149,7 +149,6 @@ public class LoginController extends BaseController {
 		logger.info(METHOD_NAME + "start : ");
 
 		String msg = null;
-		String resMsg=null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 
@@ -158,9 +157,10 @@ public class LoginController extends BaseController {
 			responseObjectsMap.put("UserVO", user);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = "Error while setting passwrod.";
+			msg = ""
+					+ ".";
 		} catch (Throwable e) {
-			msg = "Error while setting passwrod.";
+			msg = "Error while setting password.";
 			logger.error(e.getMessage());
 		}
 

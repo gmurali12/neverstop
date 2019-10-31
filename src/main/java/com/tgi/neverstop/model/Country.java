@@ -31,7 +31,8 @@ public class Country implements Serializable {
 	@Column(name = "status")
 	private int status;
 
-	@Column(name = "continent_id")
+	@NotBlank
+	@Column(name = "continent_id", nullable = false)
 	private String continentId;
 
 	public Country() {

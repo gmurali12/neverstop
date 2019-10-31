@@ -7,8 +7,10 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.repository.CountryRepository;
 import com.tgi.neverstop.util.CommonUtilities;
@@ -22,7 +24,7 @@ public class CountryManagerImpl {
 	@Autowired
 	CountryRepository countryRepository;
 
-	public Country saveCountry(Country country) {
+	public Country saveCountry(Country country) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -33,14 +35,18 @@ public class CountryManagerImpl {
 				country.setId(CommonUtilities.generateRandomUUID());
 			}
 			country = countryRepository.save(country);
-
+		}catch (DataIntegrityViolationException e) {
+			throw new NeverStopExcpetion("Country Name Already Exist");
+		    
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			re.printStackTrace();
+			//re.printStackTrace();
+			throw new NeverStopExcpetion(re.getMessage());
 
 		} catch (Throwable e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			logger.error(e.getMessage());
+			throw new NeverStopExcpetion(e.getMessage());
 
 		}
 		logger.info(METHOD_NAME + "END");

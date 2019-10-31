@@ -46,7 +46,7 @@ public class EntityController extends BaseController {
 	
 	@Value("${neverstop.geoJson.format}")
 	private String fileFormat;
-
+	
 	@GetMapping("/getAllEntity")
 	public ResponseEntity<?> getAllEntity() {
 
@@ -286,4 +286,5 @@ public class EntityController extends BaseController {
 				"Unable to get Entity Details.");
 		return ResponseEntity.ok().body(responseVO);
 	}
+	
 }

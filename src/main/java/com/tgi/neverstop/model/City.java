@@ -31,7 +31,8 @@ public class City implements Serializable {
 	@Column(name = "status")
 	private int status;
 
-	@Column(name = "country_id")
+	@NotBlank
+	@Column(name = "country_id", nullable = false)
 	private String countryId;
 
 	public City() {
