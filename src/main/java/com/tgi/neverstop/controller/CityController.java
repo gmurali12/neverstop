@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.CityManagerImpl;
 import com.tgi.neverstop.model.City;
+import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.ResponseVO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -53,6 +54,39 @@ public class CityController extends BaseController {
 			msg = "Unable to select Country.";
 			logger.error(e.getMessage());
 		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
+	@PostMapping("/searchByName")
+	public ResponseEntity<?> searchbyName(@RequestParam String cityName) {
+
+		String METHOD_NAME = "searchbyName()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+
+		try {
+			List<City> cityList = cityManager.searchbyName(cityName);
+			responseObjectsMap.put("CityList", cityList);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = e.getMessage();
+			logger.error(e.getMessage());
+		} 
+		
 
 		logger.info(METHOD_NAME + "END");
 		if (null == msg) {

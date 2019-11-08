@@ -166,11 +166,10 @@ public class UserManagerImpl {
 		Optional<User> userDetail = userRepository.findByUsername(userName);
 		if (userDetail != null && userDetail.isPresent())
 		{
-			 user = userDetail.get();
+			user = userDetail.get();
 			String password = new String(commonUtil.geek_Password(8));
 			user.setPassword(password);
 			updateUser(user);
-			//commonUtil.generateforgetPwdMail(user.getEmail(),password);
 			try {
 				commonUtil.sendSimpleMessage(user.getEmail(),password);
 			} catch (MessagingException | IOException e) {
@@ -193,7 +192,7 @@ public class UserManagerImpl {
 		{
 			user = userDetail.get();
 			user.setPassword(encoder.encode(newPassword));
-			updateUser(user);
+			user = userRepository.save(user);
 		} else {
 			throw new NeverStopExcpetion("Invalid Username");
 		}

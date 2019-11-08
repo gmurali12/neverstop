@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Continent;
-import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.repository.ContinentRepository;
 import com.tgi.neverstop.util.CommonUtilities;
 
@@ -93,5 +92,27 @@ public class ContinentManagerImpl {
 		}
 		logger.info(METHOD_NAME + "END");
 		return continent;
+	}
+
+	public List<Continent> searchbyName(String continentName) throws NeverStopExcpetion 
+	{
+		String METHOD_NAME = "searchbyName()";
+		logger.info(METHOD_NAME + "start : ");
+		List<Continent> contList = null;
+
+		try {
+
+			contList = continentRepository.searchbyName(continentName);
+			if (null == contList || contList.isEmpty()) {
+				throw new NeverStopExcpetion("Continent Not Found");
+			}
+
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} 
+		logger.info(METHOD_NAME + "END");
+		return contList;
 	}
 }

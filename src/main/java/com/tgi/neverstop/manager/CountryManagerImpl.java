@@ -140,4 +140,25 @@ public class CountryManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return country;
 	}
+
+	public List<Country> searchbyName(String countryName) throws NeverStopExcpetion {
+		String METHOD_NAME = "searchbyName()";
+		logger.info(METHOD_NAME + "start : ");
+		List<Country> contList = null;
+
+		try {
+
+			contList = countryRepository.searchbyName(countryName);
+			if (null == contList || contList.isEmpty()) {
+				throw new NeverStopExcpetion("Country Not Found");
+			}
+
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} 
+		logger.info(METHOD_NAME + "END");
+		return contList;
+	}
 }

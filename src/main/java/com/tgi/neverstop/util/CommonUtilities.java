@@ -155,6 +155,7 @@ public class CommonUtilities {
 			properties.put("hours", "6am - 5pm");
 			properties.put("phone", entity.getPhone());
 			properties.put("description", entity.getDescription());
+			properties.put("rating", entity.getRatingCount());
 			JSONArray features = new JSONArray();
 
 			JSONObject feature = new JSONObject();

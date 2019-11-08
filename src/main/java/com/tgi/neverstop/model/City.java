@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
@@ -27,6 +29,9 @@ public class City implements Serializable {
 	@Size(min = 3, max = 25)
 	@Column(name = "city_name", nullable = false)
 	private String cityName;
+	
+	@Column(name = "city_img")
+	private String cityImg;
 
 	@Column(name = "status")
 	private int status;
@@ -34,6 +39,11 @@ public class City implements Serializable {
 	@NotBlank
 	@Column(name = "country_id", nullable = false)
 	private String countryId;
+	
+	@ManyToOne(optional = false)
+    @JoinColumn(name = "country_id", insertable = false, updatable = false)
+    private Country country;
+	
 
 	public City() {
 	}
@@ -68,6 +78,22 @@ public class City implements Serializable {
 
 	public void setStatus(int status) {
 		this.status = status;
+	}
+
+	public Country getCountry() {
+		return country;
+	}
+
+	public void setCountry(Country country) {
+		this.country = country;
+	}
+
+	public String getCityImg() {
+		return cityImg;
+	}
+
+	public void setCityImg(String cityImg) {
+		this.cityImg = cityImg;
 	}
 
 }

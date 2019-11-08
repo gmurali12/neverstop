@@ -116,4 +116,25 @@ public class CityManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return city;
 	}
+
+	public List<City> searchbyName(String cityName) throws NeverStopExcpetion {
+		String METHOD_NAME = "searchbyName()";
+		logger.info(METHOD_NAME + "start : ");
+		List<City> cityList = null;
+
+		try {
+
+			cityList = cityRepository.searchbyName(cityName);
+			if (null == cityList || cityList.isEmpty()) {
+				throw new NeverStopExcpetion("City Not Found");
+			}
+
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} 
+		logger.info(METHOD_NAME + "END");
+		return cityList;
+	}
 }

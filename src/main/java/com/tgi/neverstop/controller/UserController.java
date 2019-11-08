@@ -100,13 +100,12 @@ public class UserController extends BaseController {
 	}
 	
 	@PostMapping("/updatePassword")
-	public ResponseEntity<?> forgetPassword(@RequestParam String username,@RequestParam String oldPassword,@RequestParam String newPassword) {
+	public ResponseEntity<?> updatePassword(@RequestParam String username,@RequestParam String newPassword) {
 
 		String METHOD_NAME = "registerUser()";
 		logger.info(METHOD_NAME + "start : ");
 
 		String msg = null;
-		String resMsg=null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 

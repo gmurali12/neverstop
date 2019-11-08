@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.manager.ContinentManagerImpl;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.ResponseVO;
@@ -53,6 +54,39 @@ public class ContinentController extends BaseController {
 			msg = "Unable to select Continent.";
 			logger.error(e.getMessage());
 		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
+	@PostMapping("/searchByName")
+	public ResponseEntity<?> searchbyName(@RequestParam String continentName) {
+
+		String METHOD_NAME = "searchbyName()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+
+		try {
+			List<Continent> continentList = continentManager.searchbyName(continentName);
+			responseObjectsMap.put("ContinentList", continentList);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = e.getMessage();
+			logger.error(e.getMessage());
+		} 
+		
 
 		logger.info(METHOD_NAME + "END");
 		if (null == msg) {

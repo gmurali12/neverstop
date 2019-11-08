@@ -5,6 +5,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
@@ -34,7 +36,11 @@ public class Country implements Serializable {
 	@NotBlank
 	@Column(name = "continent_id", nullable = false)
 	private String continentId;
-
+	
+	@ManyToOne(optional = false)
+    @JoinColumn(name = "continent_id", insertable = false, updatable = false)
+    private Continent continent;
+	
 	public Country() {
 	}
 
@@ -65,9 +71,16 @@ public class Country implements Serializable {
 	public String getId() {
 		return id;
 	}
-
+	
 	public void setId(String id) {
 		this.id = id;
 	}
 
+	public Continent getContinent() {
+		return continent;
+	}
+
+	public void setContinent(Continent continent) {
+		this.continent = continent;
+	}
 }
