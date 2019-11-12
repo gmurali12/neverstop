@@ -73,14 +73,14 @@ public class CityManagerImpl {
 		return cityList;
 	}
 	
-	public List<City> getCityByCountryId(String countryId) {
+	public List<City> getCityByStateId(String stateId) {
 		String METHOD_NAME = "getCityByCountryId()";
 		logger.info(METHOD_NAME + "start : ");
 		List<City> cityList= null;
 
 		try {
 
-			cityList = cityRepository.findByCountryId(countryId);
+			cityList = cityRepository.findByStateId(stateId);
 			
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

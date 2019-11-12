@@ -12,7 +12,7 @@ import com.tgi.neverstop.model.City;
 @Repository
 public interface CityRepository extends JpaRepository<City, String> {
 
-	List<City> findByCountryId(String countryId);
+	List<City> findByStateId(String stateId);
 	
 	@Query("Select u from City u where u.cityName like %:cityName%")
 	List<City> searchbyName(@Param("cityName") String cityName);

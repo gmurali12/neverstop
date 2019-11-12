@@ -37,12 +37,12 @@ public class City implements Serializable {
 	private int status;
 
 	@NotBlank
-	@Column(name = "country_id", nullable = false)
-	private String countryId;
+	@Column(name = "state_id", nullable = false)
+	private String stateId;
 	
 	@ManyToOne(optional = false)
-    @JoinColumn(name = "country_id", insertable = false, updatable = false)
-    private Country country;
+    @JoinColumn(name = "state_id", insertable = false, updatable = false)
+    private State state;
 	
 
 	public City() {
@@ -64,28 +64,13 @@ public class City implements Serializable {
 		this.cityName = cityName;
 	}
 
-	public String getCountryId() {
-		return countryId;
-	}
-
-	public void setCountryId(String countryId) {
-		this.countryId = countryId;
-	}
-
+	
 	public int getStatus() {
 		return status;
 	}
 
 	public void setStatus(int status) {
 		this.status = status;
-	}
-
-	public Country getCountry() {
-		return country;
-	}
-
-	public void setCountry(Country country) {
-		this.country = country;
 	}
 
 	public String getCityImg() {
@@ -96,4 +81,21 @@ public class City implements Serializable {
 		this.cityImg = cityImg;
 	}
 
+	public String getStateId() {
+		return stateId;
+	}
+
+	public void setStateId(String stateId) {
+		this.stateId = stateId;
+	}
+
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+	
+	
 }

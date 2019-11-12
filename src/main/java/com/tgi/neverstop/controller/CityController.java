@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.CityManagerImpl;
 import com.tgi.neverstop.model.City;
-import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.ResponseVO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -49,9 +48,9 @@ public class CityController extends BaseController {
 			responseObjectsMap.put("CityList", cityList);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = "Unable to select Country.";
+			msg = "Unable to select City.";
 		} catch (Throwable e) {
-			msg = "Unable to select Country.";
+			msg = "Unable to select City.";
 			logger.error(e.getMessage());
 		}
 
@@ -99,10 +98,10 @@ public class CityController extends BaseController {
 
 	}
 
-	@PostMapping("/getCityByCountryId")
-	public ResponseEntity<?> getCityByCountryId(@RequestParam String countryId) {
+	@PostMapping("/getCityByStateId")
+	public ResponseEntity<?> getCityByStateId(@RequestParam String stateId) {
 
-		String METHOD_NAME = "getCityByCountryId()";
+		String METHOD_NAME = "getCityByStateId()";
 		logger.info(METHOD_NAME + "start : ");
 
 		String msg = null;
@@ -110,14 +109,14 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			List<City> cityList = cityManager.getCityByCountryId(countryId);
+			List<City> cityList = cityManager.getCityByStateId(stateId);
 			
 			responseObjectsMap.put("CityList", cityList);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = "Unable to select Country.";
+			msg = "Unable to select City.";
 		} catch (Throwable e) {
-			msg = "Unable to select Country.";
+			msg = "Unable to select City.";
 			logger.error(e.getMessage());
 		}
 
@@ -211,9 +210,9 @@ public class CityController extends BaseController {
 			responseObjectsMap.put("CityVO", city);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = "Unable to save Country.";
+			msg = "Unable to save City.";
 		} catch (Throwable e) {
-			msg = "Unable to save Country.";
+			msg = "Unable to save City.";
 			logger.error(e.getMessage());
 		}
 

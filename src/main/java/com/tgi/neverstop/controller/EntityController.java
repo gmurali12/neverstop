@@ -43,10 +43,10 @@ public class EntityController extends BaseController {
 
 	@Autowired
 	CommonUtilities commonUtil;
-	
+
 	@Value("${neverstop.geoJson.format}")
 	private String fileFormat;
-	
+
 	@GetMapping("/getAllEntity")
 	public ResponseEntity<?> getAllEntity() {
 
@@ -85,7 +85,6 @@ public class EntityController extends BaseController {
 			@RequestPart(value = "entityImg", required = false) MultipartFile entityImg,
 			@RequestPart(value = "thumbImg", required = false) MultipartFile thumbImg) {
 
-		System.out.println("EntityVO>>>" + entity);
 		String METHOD_NAME = "saveEntity()";
 		logger.info(METHOD_NAME + "start : ");
 
@@ -152,7 +151,7 @@ public class EntityController extends BaseController {
 		}
 
 	}
-	
+
 	@PostMapping("/getEntityById")
 	public ResponseEntity<?> getEntityById(@RequestParam String entityId) {
 
@@ -182,9 +181,9 @@ public class EntityController extends BaseController {
 		}
 	}
 
-	
 	@PostMapping("/getEntityByCityId")
-	public ResponseEntity<?> getEntity(@RequestParam String cityId) throws Exception {
+	public ResponseEntity<?> getEntity(@RequestParam String cityId)
+			throws Exception {
 		String METHOD_NAME = "getEntityByCityId()";
 		logger.info(METHOD_NAME + "start : ");
 
@@ -217,7 +216,7 @@ public class EntityController extends BaseController {
 
 		String METHOD_NAME = "downloadEntityById()";
 		logger.info(METHOD_NAME + "start : ");
-  
+
 		String msg;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
@@ -228,12 +227,14 @@ public class EntityController extends BaseController {
 			if (entity != null) {
 				geoJson = commonUtil.generateGeoJSON(entity);
 				byte[] isr = geoJson.toString().getBytes();
-				String fileName = entity.getCity() + "_entity"+fileFormat;
+				String fileName = entity.getCity() + "_entity" + fileFormat;
 				HttpHeaders respHeaders = new HttpHeaders();
 				respHeaders.setContentLength(isr.length);
 				respHeaders.setContentType(new MediaType("text", "json"));
-				respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-				respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+				respHeaders
+						.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+				respHeaders.set(HttpHeaders.CONTENT_DISPOSITION,
+						"attachment; filename=" + fileName);
 				return new ResponseEntity<byte[]>(isr, respHeaders,
 						HttpStatus.OK);
 			}
@@ -249,29 +250,25 @@ public class EntityController extends BaseController {
 				"Unable to get Entity Details.");
 		return ResponseEntity.ok().body(responseVO);
 	}
-	
-	
+
 	@PostMapping("/downloadEntityByCityId")
-	public ResponseEntity<?> downloadEntityByCityId(@RequestParam String cityId) throws Exception {
+	public ResponseEntity<?> downloadEntityByCityId(@RequestParam String cityId)
+			throws Exception {
 		String METHOD_NAME = "downloadEntityByCityId()";
 		logger.info(METHOD_NAME + "start : ");
 
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-		JSONObject geoJson = null;
 		try {
-			List<EntityVO> entityList = entityManager.getByCityId(cityId);
-			geoJson = commonUtil.generateGeoJSONList(entityList);
-			byte[] isr = geoJson.toString().getBytes();
-			String fileName = cityId + "_entity"+fileFormat;
-			HttpHeaders respHeaders = new HttpHeaders();
-			respHeaders.setContentLength(isr.length);
-			respHeaders.setContentType(new MediaType("text", "json"));
-			respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-			respHeaders.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
-			return new ResponseEntity<byte[]>(isr, respHeaders,
-					HttpStatus.OK);
+			String filePath = entityManager.downloadByCityId(cityId);
+			if(filePath!=null){
+				
+				responseObjectsMap.put("FilePath", filePath);
+			}else{
+				msg="Unable to Get Entity Detail.";	
+			}
+			
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			msg = "Unable to Get Entity Detail.";
@@ -282,9 +279,13 @@ public class EntityController extends BaseController {
 
 		logger.info(METHOD_NAME + "END");
 		logger.info(METHOD_NAME + "END");
-		responseVO = createServiceResponseError(responseObjectsMap,
-				"Unable to get Entity Details.");
-		return ResponseEntity.ok().body(responseVO);
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
 	}
-	
+
 }

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.CountryManagerImpl;
-import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.model.ResponseVO;
 

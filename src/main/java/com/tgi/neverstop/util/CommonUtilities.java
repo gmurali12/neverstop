@@ -1,8 +1,10 @@
 package com.tgi.neverstop.util;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
@@ -14,6 +16,7 @@ import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,7 +29,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
@@ -46,11 +48,23 @@ public class CommonUtilities {
 	@Value("${neverstop.app.mail.forgetMailSubject}")
 	private String mailSubject;
 	
-	@Autowired
-    private JavaMailSender emailSender;
+	@Value("${neverstop.static.filepath}")
+	private String staticFilePath;
 
-    @Autowired
-    private SpringTemplateEngine templateEngine;
+	@Value("${neverstop.geojson.directory}")
+	private String geojsonFile;
+
+	@Value("${neverstop.geoJson.format}")
+	private String fileFormat;
+	
+	@Value("${neverstop.static.url}")
+	private String downloadFileUrl;
+
+	@Autowired
+	private JavaMailSender emailSender;
+
+	@Autowired
+	private SpringTemplateEngine templateEngine;
 
 	public static String generateRandomUUID() {
 		String METHOD_NAME = "generateRandomUUID";
@@ -115,7 +129,6 @@ public class CommonUtilities {
 		return password;
 	}
 
-	
 	public boolean writeImageFile(MultipartFile file, String filePath)
 			throws NeverStopExcpetion, IOException {
 		BufferedOutputStream stream = null;
@@ -162,47 +175,45 @@ public class CommonUtilities {
 			feature.put("type", "Feature");
 			feature.put("properties", properties);
 			JSONObject geometry = new JSONObject();
-			JSONArray JSONArrayCoord = new JSONArray("[" + entity.getLatitude() + "," + entity.getLongitude()
-					+ "]");
+			JSONArray JSONArrayCoord = new JSONArray("[" + entity.getLatitude()
+					+ "," + entity.getLongitude() + "]");
 
 			geometry.put("type", "Point");
 			geometry.put("coordinates", JSONArrayCoord);
-			
+
 			feature.put("geometry", geometry);
 			features.put(feature);
 			featureCollection.put("features", features);
 
-			// System.out.println(featureCollection.toString());
-			// }
-
-			System.out.println(featureCollection.toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return featureCollection;
 	}
 
-	public JSONObject generateGeoJSONList(List<EntityVO> entityList) throws JSONException {
+	public JSONObject generateGeoJSONList(List<EntityVO> entityList)
+			throws JSONException {
 		JSONObject featureCollection = new JSONObject();
 		featureCollection.put("type", "FeatureCollection");
 		JSONArray features = new JSONArray();
 		try {
-			for(EntityVO entity:entityList){
-				System.out.println("Entity Name::"+entity.getEntityName());
-				
+			for (EntityVO entity : entityList) {
+				System.out.println("Entity Name::" + entity.getEntityName());
+
 				JSONObject properties = new JSONObject();
 				properties.put("name", entity.getEntityName());
-				properties.put("hours", "6am - 5pm");
+				properties.put("hours", entity.getHours());
 				properties.put("phone", entity.getPhone());
 				properties.put("description", entity.getDescription());
-				
+
 				JSONObject geometry = new JSONObject();
-				JSONArray JSONArrayCoord = new JSONArray("[" + entity.getLatitude() + "," + entity.getLongitude()
+				JSONArray JSONArrayCoord = new JSONArray("["
+						+ entity.getLatitude() + "," + entity.getLongitude()
 						+ "]");
 
 				geometry.put("type", "Point");
 				geometry.put("coordinates", JSONArrayCoord);
-				
+
 				JSONObject feature = new JSONObject();
 				feature.put("type", "Feature");
 				feature.put("properties", properties);
@@ -216,23 +227,87 @@ public class CommonUtilities {
 		}
 		return featureCollection;
 	}
-	
-	public void sendSimpleMessage(String mailId, String pwd) throws MessagingException, IOException {
-        MimeMessage message = emailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message,
-                MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
-                StandardCharsets.UTF_8.name());
 
-       // helper.addAttachment("logo.png", new ClassPathResource("memorynotfound-logo.png"));
+	public void sendSimpleMessage(String mailId, String pwd)
+			throws MessagingException, IOException {
+		MimeMessage message = emailSender.createMimeMessage();
+		MimeMessageHelper helper = new MimeMessageHelper(message,
+				MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED,
+				StandardCharsets.UTF_8.name());
 
-        Context context = new Context();
-      //  context.setVariables(mail.getModel());
-        context.setVariable("Password",pwd );
-        String html = templateEngine.process("template.html", context);
+		// helper.addAttachment("logo.png", new
+		// ClassPathResource("memorynotfound-logo.png"));
 
-        helper.setTo(mailId);
-        helper.setText(html, true);
-        helper.setSubject(mailSubject);
-        emailSender.send(message);
-    }
+		Context context = new Context();
+		// context.setVariables(mail.getModel());
+		context.setVariable("Password", pwd);
+		String html = templateEngine.process("template.html", context);
+
+		helper.setTo(mailId);
+		helper.setText(html, true);
+		helper.setSubject(mailSubject);
+		emailSender.send(message);
+	}
+
+	public String downloadGeoJSONList(String cityId, List<EntityVO> entityList)
+			throws JSONException, NeverStopExcpetion {
+		JSONObject featureCollection = new JSONObject();
+		featureCollection.put("type", "FeatureCollection");
+		JSONArray features = new JSONArray();
+		String geoFilePath = geojsonFile+cityId+"/";
+		String filePath = geoFilePath+cityId+"_entity"
+				+ fileFormat;
+		System.out.println("File Path>>>"+filePath);
+		String downloadFilePath=null;
+		try {
+			for (EntityVO entity : entityList) {
+				System.out.println("Entity Name::" + entity.getEntityName());
+
+				JSONObject properties = new JSONObject();
+				properties.put("name", entity.getEntityName());
+				properties.put("hours", entity.getHours());
+				properties.put("phone", entity.getPhone());
+				properties.put("description", entity.getDescription());
+
+				JSONObject geometry = new JSONObject();
+				JSONArray JSONArrayCoord = new JSONArray("["
+						+ entity.getLatitude() + "," + entity.getLongitude()
+						+ "]");
+
+				geometry.put("type", "Point");
+				geometry.put("coordinates", JSONArrayCoord);
+				JSONObject feature = new JSONObject();
+				feature.put("type", "Feature");
+				feature.put("properties", properties);
+				feature.put("geometry", geometry);
+				features.put(feature);
+			}
+			featureCollection.put("features", features);
+			System.out.println(featureCollection.toString());
+			
+			File directory = new File(staticFilePath+geoFilePath);
+			if (!directory.exists()) {
+				directory.mkdir();
+
+			} else {
+				FileUtils.cleanDirectory(directory);
+			}
+			FileWriter fw = null;
+			try {
+				System.out.println("File Path....>>>"+staticFilePath+filePath);
+				fw = new FileWriter(staticFilePath+filePath);
+				fw.write(featureCollection.toString());
+				downloadFilePath=downloadFileUrl+filePath;
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				fw.close();
+			}
+			return downloadFilePath;
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new NeverStopExcpetion("Unable to Write File");
+		}
+		
+	}
 }
