@@ -98,7 +98,7 @@ public class CountryManagerImpl {
 		return countryList;
 	}
 
-	public @Valid Country updateCountry(@Valid Country country) {
+	public @Valid Country updateCountry(@Valid Country country) throws NeverStopExcpetion {
 		String METHOD_NAME = "updateCountry()";
 		logger.info(METHOD_NAME + "start : ");
 
@@ -106,13 +106,18 @@ public class CountryManagerImpl {
 
 			country = countryRepository.save(country);
 
+		} catch (DataIntegrityViolationException e) {
+			throw new NeverStopExcpetion("Country Name Already Exist");
+		    
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			re.printStackTrace();
+			//re.printStackTrace();
+			throw new NeverStopExcpetion(re.getMessage());
 
 		} catch (Throwable e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			logger.error(e.getMessage());
+			throw new NeverStopExcpetion(e.getMessage());
 
 		}
 		logger.info(METHOD_NAME + "END");

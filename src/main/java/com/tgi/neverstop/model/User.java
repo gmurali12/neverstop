@@ -19,10 +19,13 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NaturalId;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Entity
 @Table(name = "users", uniqueConstraints = {
 		@UniqueConstraint(columnNames = { "username" }),
 		@UniqueConstraint(columnNames = { "email" }) })
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User implements Serializable {
 
 	private static final long serialVersionUID = 1L;

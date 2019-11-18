@@ -185,9 +185,9 @@ public class CountryController extends BaseController {
 			responseObjectsMap.put("CountryVO", country);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = "Unable to save Country.";
+			msg = "Unable to Update Country-"+re.getMessage();
 		} catch (Throwable e) {
-			msg = "Unable to save Country.";
+			msg = "Unable to Update Country."+e.getMessage();
 			logger.error(e.getMessage());
 		}
 

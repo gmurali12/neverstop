@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.tgi.neverstop.controller.UserController;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
+import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Role;
 import com.tgi.neverstop.model.RoleName;
 import com.tgi.neverstop.model.User;
@@ -198,5 +199,28 @@ public class UserManagerImpl {
 		}
 		return user;
 	}
+	
+	public User findById(String userId) {
+		String METHOD_NAME = "findById()";
+		logger.info(METHOD_NAME + "start : ");
+
+		User user = null;
+		try {
+
+			user = userRepository.getOne(userId);
+
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+
+		}
+		logger.info(METHOD_NAME + "END");
+		return user;
+	}
+
 	
 }

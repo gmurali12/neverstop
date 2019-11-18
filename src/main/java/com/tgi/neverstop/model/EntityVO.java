@@ -7,11 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 
 @Entity
 @Table(name = "entity")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class EntityVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;

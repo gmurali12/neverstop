@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.UserManagerImpl;
+import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.ResponseVO;
 import com.tgi.neverstop.model.User;
 
@@ -117,6 +118,38 @@ public class UserController extends BaseController {
 			msg = "Unable to register user.";
 		} catch (Throwable e) {
 			msg = "Unable to register user.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
+	@PostMapping("/getUserById")
+	public ResponseEntity<?> getUserById(@RequestParam String id) {
+
+		String METHOD_NAME = "getUserById()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+
+		try {
+			User user = userManager.findById(id);
+			responseObjectsMap.put("UserVO", user);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = "Unable to select User.";
+		} catch (Throwable e) {
+			msg = "Unable to select User.";
 			logger.error(e.getMessage());
 		}
 
