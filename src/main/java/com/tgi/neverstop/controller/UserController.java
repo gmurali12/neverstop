@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.hibernate.usertype.UserVersionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tgi.neverstop.manager.UserManagerImpl;
-import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.ResponseVO;
 import com.tgi.neverstop.model.User;
 
@@ -68,7 +68,7 @@ public class UserController extends BaseController {
 	}
 
 	@PostMapping("/updateProfile")
-	public ResponseEntity<?> updateProfile(@Valid @RequestBody User user) {
+	public ResponseEntity<?> updateProfile(@RequestParam String userId,@RequestParam String name) {
 
 		String METHOD_NAME = "updateProfile()";
 		logger.info(METHOD_NAME + "start : ");
@@ -78,7 +78,7 @@ public class UserController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			user = userManager.updateUser(user);
+			User user = userManager.updateUserProfile(userId,name);
 			responseObjectsMap.put("userVO", user);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

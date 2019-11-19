@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.repository.EntityRepository;
 import com.tgi.neverstop.repository.ReviewRepository;
@@ -36,11 +36,14 @@ public class EntityManagerImpl {
 	@Autowired
 	GoogleMapUtil googleMapUtil;
 	
-	@Value("${spring.resources.static-locations}")
+	@Value("${neverstop.static.filepath}")
 	private String staticFilePath;
 
 	@Value("${neverstop.images.entity.directory}")
 	private String entityImgPath;
+	
+	@Value("${neverstop.static.url}")
+	private String fileUrl;
 
 	public static final Logger logger = LoggerFactory
 			.getLogger(EntityManagerImpl.class);
@@ -76,7 +79,7 @@ public class EntityManagerImpl {
 	}
 
 	public EntityVO saveEntity(@Valid EntityVO entity, MultipartFile entityImg,
-			MultipartFile thumbImg) {
+			MultipartFile thumbImg) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveEntity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -98,18 +101,21 @@ public class EntityManagerImpl {
 			}
 			entity = entityRepository.save(entity);
 			if (entityImg != null || thumbImg != null) {
+				String urlPath=fileUrl+entityImgPath + entity.getId() + "/";
 				String filePath = staticFilePath+entityImgPath + entity.getId() + "/";
 				entity.setImagePath(filePath);
 				if (entityImg != null) {
 					isUploaded = commonUtil.writeImageFile(entityImg, filePath);
 					if (isUploaded) {
-						entity.setProfileImage(entityImg.getOriginalFilename());
+						String fileName = entityImg.getOriginalFilename();
+						entity.setProfileImage(urlPath+fileName);
 					}
 				}
 				if (thumbImg != null) {
 					isUploaded = commonUtil.writeImageFile(thumbImg, filePath);
 					if (isUploaded) {
-						entity.setThumbImage(thumbImg.getOriginalFilename());
+						String fileName = thumbImg.getOriginalFilename();
+						entity.setThumbImage(urlPath+fileName);
 					}
 				}
 				entity = entityRepository.save(entity);
@@ -118,6 +124,7 @@ public class EntityManagerImpl {
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
+			throw new NeverStopExcpetion(re.getMessage());
 
 		} catch (Throwable e) {
 			e.printStackTrace();
@@ -130,39 +137,55 @@ public class EntityManagerImpl {
 	}
 
 	public EntityVO updateEntity(@Valid EntityVO entity,
-			MultipartFile entityImg, MultipartFile thumbImg) {
+			MultipartFile entityImg, MultipartFile thumbImg) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveEntity()";
 		logger.info(METHOD_NAME + "start : ");
 		Boolean isUploaded = false;
-		try {
+		
+		if(entity.getId()!=null)
+		{
+			EntityVO entityVO = entityRepository.getOne(entity.getId());
+			if(entityVO!=null)
+			{
+				try {
+					String urlPath=fileUrl+entityImgPath + entity.getId() + "/";
+					String filePath = staticFilePath+entityImgPath + entity.getId() + "/";
+					if (entityImg != null) {
+						isUploaded = commonUtil.writeImageFile(entityImg, filePath);
+						if (isUploaded) {
+							String fileName = entityImg.getOriginalFilename();
+							entity.setProfileImage(urlPath+fileName);
+						}
+					}else{
+						entity.setProfileImage(entityVO.getProfileImage());
+					}
+					if (thumbImg != null) {
+						isUploaded = commonUtil.writeImageFile(thumbImg, filePath);
+						if (isUploaded) {
+							String fileName = thumbImg.getOriginalFilename();
+							entity.setThumbImage(urlPath+fileName);
+						}
+					}else{
+						entity.setThumbImage(entityVO.getThumbImage());
+					}
+					entity = entityRepository.save(entity);
+				} catch (RuntimeException re) {
+					logger.error(re.getMessage());
+					re.printStackTrace();
 
-			if (entityImg != null) {
-				String filePath = entityImgPath + entity.getId() + "/";
-				isUploaded = commonUtil.writeImageFile(entityImg, filePath);
-				if (isUploaded) {
-					entity.setImagePath(filePath
-							+ entityImg.getOriginalFilename());
+				} catch (Throwable e) {
+					e.printStackTrace();
+					logger.error(e.getMessage());
+
 				}
+			}else{
+				throw new NeverStopExcpetion("Entity Id Not Found");
 			}
-			if (thumbImg != null) {
-				String filePath = entityImgPath + entity.getId() + "/";
-				isUploaded = commonUtil.writeImageFile(thumbImg, filePath);
-				if (isUploaded) {
-					entity.setThumbImage(filePath
-							+ entityImg.getOriginalFilename());
-				}
-			}
-			entity = entityRepository.save(entity);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			re.printStackTrace();
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-
+		}else{
+			throw new NeverStopExcpetion("Entity Id Not Found");
 		}
+		
 		logger.info(METHOD_NAME + "END");
 		return entity;
 
@@ -175,12 +198,12 @@ public class EntityManagerImpl {
 
 		EntityVO entity = null;
 		try {
-
 			entity = entityRepository.getOne(entityId);
-			Double rating = reviewRepository
-					.getAvgRatngByEntity(entity.getId());
-			entity.setRatingCount(rating);
-
+			if(entity!=null){
+				Double rating = reviewRepository
+						.getAvgRatngByEntity(entity.getId());
+				entity.setRatingCount(rating);
+			}
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
@@ -188,13 +211,10 @@ public class EntityManagerImpl {
 		} catch (Throwable e) {
 			e.printStackTrace();
 			logger.error(e.getMessage());
-
 		}
 		logger.info(METHOD_NAME + "END");
 		return entity;
-
 	}
-
 	public List<EntityVO> getByCityId(String cityId) {
 		String METHOD_NAME = "getByCityId()";
 		logger.info(METHOD_NAME + "start : ");

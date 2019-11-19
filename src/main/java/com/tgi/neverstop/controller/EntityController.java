@@ -119,7 +119,7 @@ public class EntityController extends BaseController {
 
 	@PostMapping("/updateEntity")
 	public ResponseEntity<?> updateEntity(
-			@Valid @RequestBody EntityVO entity,
+			@RequestPart EntityVO entity,
 			@RequestPart(value = "entityImg", required = false) MultipartFile entityImg,
 			@RequestPart(value = "thumbImg", required = false) MultipartFile thumbImg) {
 

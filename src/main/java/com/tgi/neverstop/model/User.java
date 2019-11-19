@@ -17,14 +17,11 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-import org.hibernate.annotations.NaturalId;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
-		@UniqueConstraint(columnNames = { "username" }),
-		@UniqueConstraint(columnNames = { "email" }) })
+		@UniqueConstraint(columnNames = { "username" })})
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User implements Serializable {
 
@@ -39,13 +36,8 @@ public class User implements Serializable {
 
 	@NotBlank
 	@Size(min = 3, max = 50)
-	private String username;
-
-	@NaturalId
-	@NotBlank
-	@Size(max = 50)
 	@Email
-	private String email;
+	private String username;
 
 	@NotBlank
 	@Size(min = 6, max = 100)
@@ -54,6 +46,7 @@ public class User implements Serializable {
 	private String deviceId;
 
 	private boolean active;
+	
 	private Timestamp registerDate;
 
 	@ManyToMany(fetch = FetchType.LAZY)
@@ -68,7 +61,6 @@ public class User implements Serializable {
 		this.id = id;
 		this.name = name;
 		this.username = username;
-		this.email = email;
 		this.password = password;
 		this.active = active;
 		this.deviceId = deviceId;
@@ -112,14 +104,6 @@ public class User implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	public String getPassword() {

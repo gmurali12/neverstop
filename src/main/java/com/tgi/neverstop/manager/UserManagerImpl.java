@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import com.tgi.neverstop.controller.UserController;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
-import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Role;
 import com.tgi.neverstop.model.RoleName;
 import com.tgi.neverstop.model.User;
@@ -75,18 +74,20 @@ public class UserManagerImpl {
 		String METHOD_NAME = "saveUser()";
 		logger.info(METHOD_NAME + "start : ");
 		boolean isUserNameExist=false;
-		boolean isEmailExist=false;
 
 		try {
-			isUserNameExist=userRepository.existsByUsername(user.getUsername());
-			isEmailExist=userRepository.existsByEmail(user.getEmail());
-			if(!isUserNameExist || !isEmailExist){
-				setDefaultValues(user);
-				user = userRepository.save(user);
+			if(user.getPassword()!=null){
+				isUserNameExist=userRepository.existsByUsername(user.getUsername());
+				if(!isUserNameExist){
+					setDefaultValues(user);
+					user = userRepository.save(user);
+				}else{
+					throw new NeverStopExcpetion(userExistErroMsg);
+				}
 			}else{
-				throw new NeverStopExcpetion(userExistErroMsg);
+				throw new NeverStopExcpetion("Mandatory field is Missing-Password");
 			}
-
+			
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
@@ -116,7 +117,7 @@ public class UserManagerImpl {
 			user.setRegisterDate(date);
 		}
 		
-		if (user.getEmail().contains("neverstop")) {
+		if (user.getUsername().contains("neverstop")) {
 			logger.info(METHOD_NAME + "...ADMIN user : ");
 			Role adminRole = roleRepository.findByName(RoleName.ROLE_ADMIN)
 					.orElseThrow(
@@ -160,7 +161,6 @@ public class UserManagerImpl {
 	
 	public User forgetPassword(String userName) throws NeverStopExcpetion 
 	{
-		String resMsg=null;
 		String METHOD_NAME = "forgetPassword()";
 		logger.info(METHOD_NAME + "start : ");
 		User user;
@@ -172,7 +172,7 @@ public class UserManagerImpl {
 			user.setPassword(password);
 			updateUser(user);
 			try {
-				commonUtil.sendSimpleMessage(user.getEmail(),password);
+				commonUtil.sendSimpleMessage(user.getUsername(),password);
 			} catch (MessagingException | IOException e) {
 				e.printStackTrace();
 				throw new NeverStopExcpetion("Error While Sending Email. Pleasse Try Again After Some Time!!!");
@@ -219,6 +219,18 @@ public class UserManagerImpl {
 
 		}
 		logger.info(METHOD_NAME + "END");
+		return user;
+	}
+
+	public User updateUserProfile(String userId, String name) throws NeverStopExcpetion {
+		User user = userRepository.getOne(userId);
+		if (user != null)
+		{
+			user.setName(name);
+			user = userRepository.save(user);
+		} else {
+			throw new NeverStopExcpetion("Invalid Username");
+		}
 		return user;
 	}
 

@@ -9,7 +9,7 @@ import com.tgi.neverstop.model.EntityVO;
 
 @Repository
 public interface EntityRepository extends JpaRepository<EntityVO, String> {
-	
+
 	List<EntityVO> findByCityId(String cityId);
 
 }

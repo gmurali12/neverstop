@@ -84,6 +84,43 @@ public class LoginController extends BaseController {
 		}
 
 	}
+	
+	@PostMapping("/adminLogin")
+	public ResponseEntity<?> adminLogin(@RequestParam String username, @RequestParam String password) {
+
+		String METHOD_NAME = "login()";
+		logger.info(METHOD_NAME + "start : ");
+		
+		UserDetails userDetails = null;
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+
+		try {
+			userDetails = loginManager.adminLogin(username, password);
+			
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = e.getMessage();
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseObjectsMap.put("UserDetails", userDetails);
+			responseObjectsMap.put("accessToken", populateToken(username,password));
+			responseObjectsMap.put("tokenType", "Bearer");
+
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
 
 	@PostMapping("/generateToken")
     public ResponseEntity<?> getUserToken(@RequestParam String username, @RequestParam String password) {
