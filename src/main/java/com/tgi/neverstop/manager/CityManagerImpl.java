@@ -5,8 +5,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.City;
@@ -21,17 +23,47 @@ public class CityManagerImpl {
 
 	@Autowired
 	CityRepository cityRepository;
+	
+	@Autowired
+	CommonUtilities commonUtil;
+	
+	@Value("${neverstop.static.filepath}")
+	private String staticFilePath;
 
-	public City saveCity(City city) throws NeverStopExcpetion {
+	@Value("${neverstop.images.city.directory}")
+	private String cityImgPath;
+	
+	@Value("${neverstop.static.url}")
+	private String fileUrl;
+	
+	@Value("${neverstop.defaultimages.directory}")
+	private String defaultFilePath;
+
+	public City saveCity(City city, MultipartFile cityImg) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveCity()";
 		logger.info(METHOD_NAME + "start : ");
-
+		boolean isUploaded=false;
 		try {
 
 			if(city.getId() ==null ){
 				city.setId(CommonUtilities.generateRandomUUID());
 			}
+			city = cityRepository.save(city);
+			if (cityImg != null ) {
+				String urlPath=fileUrl+cityImgPath+ city.getId() + "/";
+				String filePath = staticFilePath+cityImgPath + city.getId() + "/";
+				isUploaded = commonUtil.writeImageFile(cityImg, filePath);
+				if (isUploaded) {
+						String fileName = cityImg.getOriginalFilename();
+						city.setCityImg(urlPath+fileName);
+					}else{
+						city.setCityImg(fileUrl+defaultFilePath);
+					}
+				}else{
+					city.setCityImg(fileUrl+defaultFilePath);
+				}
+				
 			city = cityRepository.save(city);
 		}catch (DataIntegrityViolationException e) {
 			throw new NeverStopExcpetion("City Name Already Exist");

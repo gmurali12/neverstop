@@ -11,7 +11,7 @@ import com.tgi.neverstop.model.User;
 public interface UserRepository extends JpaRepository<User, String> {
 	Optional<User> findByUsername(String username);
 
-	Boolean existsByUsername(String username);
+	boolean existsByUsername(String username);
 
 	//Boolean existsByEmail(String email);
 }

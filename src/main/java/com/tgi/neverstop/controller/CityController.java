@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.manager.CityManagerImpl;
 import com.tgi.neverstop.model.City;
 import com.tgi.neverstop.model.ResponseVO;
+import com.tgi.neverstop.model.State;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -132,7 +135,8 @@ public class CityController extends BaseController {
 	}
 
 	@PostMapping("/saveCity")
-	public ResponseEntity<?> saveCity(@Valid @RequestBody City city) {
+	public ResponseEntity<?> saveCity(@RequestPart City city,
+			@RequestPart(value = "cityImg", required = false) MultipartFile cityImg) {
 
 		String METHOD_NAME = "saveCity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -142,7 +146,7 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			city = cityManager.saveCity(city);
+			city = cityManager.saveCity(city,cityImg);
 			responseObjectsMap.put("CityVO", city);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -164,7 +168,8 @@ public class CityController extends BaseController {
 	}
 	
 	@PostMapping("/updateCity")
-	public ResponseEntity<?> updateCity(@Valid @RequestBody City city) {
+	public ResponseEntity<?> updateCity(@RequestPart City city,
+			@RequestPart(value = "cityImg", required = false) MultipartFile cityImg) {
 
 		String METHOD_NAME = "updateCity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -174,7 +179,7 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			city = cityManager.saveCity(city);
+			city = cityManager.saveCity(city,cityImg);
 			responseObjectsMap.put("CityVO", city);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

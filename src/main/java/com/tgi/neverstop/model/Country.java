@@ -33,6 +33,9 @@ public class Country implements Serializable {
 	@Column(name = "status")
 	private int status;
 
+	@Column(name = "country_image")
+	private String countryImg;
+	
 	@NotBlank
 	@Column(name = "continent_id", nullable = false)
 	private String continentId;
@@ -82,5 +85,13 @@ public class Country implements Serializable {
 
 	public void setContinent(Continent continent) {
 		this.continent = continent;
+	}
+
+	public String getCountryImg() {
+		return countryImg;
+	}
+
+	public void setCountryImg(String countryImg) {
+		this.countryImg = countryImg;
 	}
 }

@@ -7,8 +7,10 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Country;
@@ -23,17 +25,47 @@ public class CountryManagerImpl {
 
 	@Autowired
 	CountryRepository countryRepository;
+	
+	@Autowired
+	CommonUtilities commonUtil;
 
-	public Country saveCountry(Country country) throws NeverStopExcpetion {
+	@Value("${neverstop.static.filepath}")
+	private String staticFilePath;
+
+	@Value("${neverstop.images.country.directory}")
+	private String countryImgPath;
+	
+	@Value("${neverstop.static.url}")
+	private String fileUrl;
+	
+	@Value("${neverstop.defaultimages.directory}")
+	private String defaultFilePath;
+
+	public Country saveCountry(Country country, MultipartFile countryImg) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
-
+		boolean isUploaded=false;
 		try {
 
 			if(country.getId() ==null ){
 				country.setId(CommonUtilities.generateRandomUUID());
 			}
+			country = countryRepository.save(country);
+			if (countryImg != null ) {
+				String urlPath=fileUrl+countryImgPath+ country.getId() + "/";
+				String filePath = staticFilePath+countryImgPath + country.getId() + "/";
+				isUploaded = commonUtil.writeImageFile(countryImg, filePath);
+				if (isUploaded) {
+						String fileName = countryImg.getOriginalFilename();
+						country.setCountryImg(urlPath+fileName);
+					}else{
+						country.setCountryImg(fileUrl+defaultFilePath);
+					}
+				}else{
+					country.setCountryImg(fileUrl+defaultFilePath);
+				}
+				
 			country = countryRepository.save(country);
 		}catch (DataIntegrityViolationException e) {
 			throw new NeverStopExcpetion("Country Name Already Exist");
@@ -98,7 +130,7 @@ public class CountryManagerImpl {
 		return countryList;
 	}
 
-	public @Valid Country updateCountry(@Valid Country country) throws NeverStopExcpetion {
+	public @Valid Country updateCountry(@Valid Country country, MultipartFile countryImg) throws NeverStopExcpetion {
 		String METHOD_NAME = "updateCountry()";
 		logger.info(METHOD_NAME + "start : ");
 

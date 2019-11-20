@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -35,13 +36,13 @@ public class EntityManagerImpl {
 
 	@Autowired
 	GoogleMapUtil googleMapUtil;
-	
+
 	@Value("${neverstop.static.filepath}")
 	private String staticFilePath;
 
 	@Value("${neverstop.images.entity.directory}")
 	private String entityImgPath;
-	
+
 	@Value("${neverstop.static.url}")
 	private String fileUrl;
 
@@ -101,21 +102,22 @@ public class EntityManagerImpl {
 			}
 			entity = entityRepository.save(entity);
 			if (entityImg != null || thumbImg != null) {
-				String urlPath=fileUrl+entityImgPath + entity.getId() + "/";
-				String filePath = staticFilePath+entityImgPath + entity.getId() + "/";
+				String urlPath = fileUrl + entityImgPath + entity.getId() + "/";
+				String filePath = staticFilePath + entityImgPath
+						+ entity.getId() + "/";
 				entity.setImagePath(filePath);
 				if (entityImg != null) {
 					isUploaded = commonUtil.writeImageFile(entityImg, filePath);
 					if (isUploaded) {
 						String fileName = entityImg.getOriginalFilename();
-						entity.setProfileImage(urlPath+fileName);
+						entity.setProfileImage(urlPath + fileName);
 					}
 				}
 				if (thumbImg != null) {
 					isUploaded = commonUtil.writeImageFile(thumbImg, filePath);
 					if (isUploaded) {
 						String fileName = thumbImg.getOriginalFilename();
-						entity.setThumbImage(urlPath+fileName);
+						entity.setThumbImage(urlPath + fileName);
 					}
 				}
 				entity = entityRepository.save(entity);
@@ -137,36 +139,42 @@ public class EntityManagerImpl {
 	}
 
 	public EntityVO updateEntity(@Valid EntityVO entity,
-			MultipartFile entityImg, MultipartFile thumbImg) throws NeverStopExcpetion {
+			MultipartFile entityImg, MultipartFile thumbImg)
+			throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveEntity()";
 		logger.info(METHOD_NAME + "start : ");
 		boolean isUploaded = false;
-		
-		if(entity.getId()!=null)
-		{
-			EntityVO entityVO = entityRepository.getOne(entity.getId());
-			if(entityVO!=null)
-			{
+
+		if (entity.getId() != null) {
+			Optional<EntityVO> entityDetails = entityRepository.findById(entity
+					.getId());
+			if (entityDetails != null && entityDetails.isPresent()) {
+				EntityVO entityVO = entityDetails.get();
+
 				try {
-					String urlPath=fileUrl+entityImgPath + entity.getId() + "/";
-					String filePath = staticFilePath+entityImgPath + entity.getId() + "/";
+					String urlPath = fileUrl + entityImgPath + entity.getId()
+							+ "/";
+					String filePath = staticFilePath + entityImgPath
+							+ entity.getId() + "/";
 					if (entityImg != null) {
-						isUploaded = commonUtil.writeImageFile(entityImg, filePath);
+						isUploaded = commonUtil.writeImageFile(entityImg,
+								filePath);
 						if (isUploaded) {
 							String fileName = entityImg.getOriginalFilename();
-							entity.setProfileImage(urlPath+fileName);
+							entity.setProfileImage(urlPath + fileName);
 						}
-					}else{
+					} else {
 						entity.setProfileImage(entityVO.getProfileImage());
 					}
 					if (thumbImg != null) {
-						isUploaded = commonUtil.writeImageFile(thumbImg, filePath);
+						isUploaded = commonUtil.writeImageFile(thumbImg,
+								filePath);
 						if (isUploaded) {
 							String fileName = thumbImg.getOriginalFilename();
-							entity.setThumbImage(urlPath+fileName);
+							entity.setThumbImage(urlPath + fileName);
 						}
-					}else{
+					} else {
 						entity.setThumbImage(entityVO.getThumbImage());
 					}
 					entity = entityRepository.save(entity);
@@ -179,13 +187,13 @@ public class EntityManagerImpl {
 					logger.error(e.getMessage());
 
 				}
-			}else{
+			} else {
 				throw new NeverStopExcpetion("Entity Id Not Found");
 			}
-		}else{
+		} else {
 			throw new NeverStopExcpetion("Entity Id Not Found");
 		}
-		
+
 		logger.info(METHOD_NAME + "END");
 		return entity;
 
@@ -199,9 +207,9 @@ public class EntityManagerImpl {
 		EntityVO entity = null;
 		try {
 			entity = entityRepository.getOne(entityId);
-			if(entity!=null){
-				Double rating = reviewRepository
-						.getAvgRatngByEntity(entity.getId());
+			if (entity != null) {
+				Double rating = reviewRepository.getAvgRatngByEntity(entity
+						.getId());
 				entity.setRatingCount(rating);
 			}
 		} catch (RuntimeException re) {
@@ -215,6 +223,7 @@ public class EntityManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return entity;
 	}
+
 	public List<EntityVO> getByCityId(String cityId) {
 		String METHOD_NAME = "getByCityId()";
 		logger.info(METHOD_NAME + "start : ");
@@ -252,7 +261,7 @@ public class EntityManagerImpl {
 		try {
 
 			entityList = entityRepository.findByCityId(cityId);
-			if (entityList != null && entityList.size()>0) {
+			if (entityList != null && entityList.size() > 0) {
 				for (EntityVO entity : entityList) {
 					Double rating = reviewRepository.getAvgRatngByEntity(entity
 							.getId());
@@ -261,7 +270,7 @@ public class EntityManagerImpl {
 				}
 				filePath = commonUtil.downloadGeoJSONList(cityId,
 						entityRatingList);
-			} 
+			}
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();

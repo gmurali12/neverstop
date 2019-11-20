@@ -180,3 +180,25 @@ RENAME TO  `neverstop`.`reviews` ;
 
 ALTER TABLE `neverstop`.`review` 
 CHANGE COLUMN `like` `is_like` INT(11) NULL DEFAULT NULL ;
+
+ALTER TABLE `neverstop`.`city` 
+ADD COLUMN `city_img` VARCHAR(45) NULL AFTER `city_name`;
+
+
+
+ALTER TABLE `neverstop`.`users` 
+DROP COLUMN `email`,
+DROP INDEX `UK6dotkott2kjsp8vw4d0m25fb7` ;
+;
+
+
+ALTER TABLE `neverstop`.`continent` 
+ADD COLUMN `continent_image` VARCHAR(100) NULL AFTER `status`;
+
+
+ALTER TABLE `neverstop`.`country` 
+ADD COLUMN `country_image` VARCHAR(100) NULL AFTER `status`;
+
+ALTER TABLE `neverstop`.`state` 
+ADD COLUMN `state_image` VARCHAR(100) NULL AFTER `status`;
+

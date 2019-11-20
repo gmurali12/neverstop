@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.manager.StateManagerImpl;
 import com.tgi.neverstop.model.Country;
@@ -140,7 +142,8 @@ public class StateController extends BaseController {
 	}
 
 	@PostMapping("/saveState")
-	public ResponseEntity<?> saveState(@Valid @RequestBody State state) {
+	public ResponseEntity<?> saveState(@RequestPart State state,
+			@RequestPart(value = "stateImg", required = false) MultipartFile stateImg) {
 
 		String METHOD_NAME = "saveState()";
 		logger.info(METHOD_NAME + "start : ");
@@ -150,7 +153,7 @@ public class StateController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			state = stateManager.saveState(state);
+			state = stateManager.saveState(state,stateImg);
 			responseObjectsMap.put("StateVO", state);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -160,6 +163,7 @@ public class StateController extends BaseController {
 			logger.error(e.getMessage());
 		}
 
+		
 		logger.info(METHOD_NAME + "END");
 		if (null == msg) {
 			responseVO = createServiceResponse(responseObjectsMap);
@@ -172,7 +176,8 @@ public class StateController extends BaseController {
 	}
 
 	@PostMapping("/updateState")
-	public ResponseEntity<?> updateState(@Valid @RequestBody State state) {
+	public ResponseEntity<?> updateState(@RequestPart State state,
+			@RequestPart(value = "stateImg", required = false) MultipartFile stateImg) {
 
 		String METHOD_NAME = "updateState()";
 		logger.info(METHOD_NAME + "start : ");
@@ -182,7 +187,8 @@ public class StateController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			state = stateManager.updateState(state);
+			//state = stateManager.updateState(state);
+			state = stateManager.saveState(state,stateImg);
 			responseObjectsMap.put("StateVO", state);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

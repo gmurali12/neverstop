@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +11,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.manager.CountryManagerImpl;
 import com.tgi.neverstop.model.Country;
@@ -139,7 +138,8 @@ public class CountryController extends BaseController {
 	}
 
 	@PostMapping("/saveCountry")
-	public ResponseEntity<?> saveCountry(@Valid @RequestBody Country country) {
+	public ResponseEntity<?> saveCountry(@RequestPart Country country,
+			@RequestPart(value = "countryImg", required = false) MultipartFile countryImg) {
 
 		String METHOD_NAME = "saveCountry()";
 		logger.info(METHOD_NAME + "start : ");
@@ -149,7 +149,7 @@ public class CountryController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			country = countryManager.saveCountry(country);
+			country = countryManager.saveCountry(country,countryImg);
 			responseObjectsMap.put("CountryVO", country);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -171,7 +171,8 @@ public class CountryController extends BaseController {
 	}
 
 	@PostMapping("/updateCountry")
-	public ResponseEntity<?> updateCountry(@Valid @RequestBody Country country) {
+	public ResponseEntity<?> updateCountry(@RequestPart Country country,
+			@RequestPart(value = "countryImg", required = false) MultipartFile countryImg) {
 
 		String METHOD_NAME = "updateCountry()";
 		logger.info(METHOD_NAME + "start : ");
@@ -181,7 +182,8 @@ public class CountryController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			country = countryManager.updateCountry(country);
+			//country = countryManager.updateCountry(country,countryImg);
+			country = countryManager.saveCountry(country,countryImg);
 			responseObjectsMap.put("CountryVO", country);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

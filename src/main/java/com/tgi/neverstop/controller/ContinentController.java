@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.manager.ContinentManagerImpl;
 import com.tgi.neverstop.model.Continent;
+import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.model.ResponseVO;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -100,7 +103,8 @@ public class ContinentController extends BaseController {
 	}
 
 	@PostMapping("/saveContinent")
-	public ResponseEntity<?> saveContinent(@Valid @RequestBody Continent continent) {
+	public ResponseEntity<?> saveContinent(	@RequestPart Continent continent,
+			@RequestPart(value = "continentImg", required = false) MultipartFile continentImg) {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -110,7 +114,7 @@ public class ContinentController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			continent = continentManager.saveContinent(continent);
+			continent = continentManager.saveContinent(continent,continentImg);
 			responseObjectsMap.put("ContinentVO", continent);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -132,7 +136,8 @@ public class ContinentController extends BaseController {
 	}
 	
 	@PostMapping("/updateContinent")
-	public ResponseEntity<?> updateContinent(@Valid @RequestBody Continent continent) {
+	public ResponseEntity<?> updateContinent(@RequestPart Continent continent,
+			@RequestPart(value = "continentImg", required = false) MultipartFile continentImg) {
 
 		String METHOD_NAME = "updateContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -142,7 +147,7 @@ public class ContinentController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			continent = continentManager.saveContinent(continent);
+			continent = continentManager.saveContinent(continent,continentImg);
 			responseObjectsMap.put("ContinentVO", continent);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

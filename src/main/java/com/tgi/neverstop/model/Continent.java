@@ -1,15 +1,10 @@
 package com.tgi.neverstop.model;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
@@ -35,6 +30,9 @@ public class Continent implements Serializable {
 
 	@Column(name = "status")
 	private int status;
+	
+	@Column(name = "continent_image")
+	private String continentImg;
 	
 	public Continent() {
 	}
@@ -65,6 +63,14 @@ public class Continent implements Serializable {
 
 	public void setContinentName(String continentName) {
 		this.continentName = continentName;
+	}
+
+	public String getContinentImg() {
+		return continentImg;
+	}
+
+	public void setContinentImg(String continentImg) {
+		this.continentImg = continentImg;
 	}
 
 	

@@ -7,8 +7,10 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.State;
@@ -23,17 +25,48 @@ public class StateManagerImpl {
 
 	@Autowired
 	StateRepository stateRepository;
+	
+	@Autowired
+	CommonUtilities commonUtil;
 
-	public State saveState(State state) throws NeverStopExcpetion {
+	@Value("${neverstop.static.filepath}")
+	private String staticFilePath;
+
+	@Value("${neverstop.images.state.directory}")
+	private String stateImgPath;
+	
+	@Value("${neverstop.static.url}")
+	private String fileUrl;
+	
+	@Value("${neverstop.defaultimages.directory}")
+	private String defaultFilePath;
+
+	public State saveState(State state, MultipartFile stateImg) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveState()";
 		logger.info(METHOD_NAME + "start : ");
-
+		boolean isUploaded = false;
 		try {
 
 			if(state.getId() ==null ){
 				state.setId(CommonUtilities.generateRandomUUID());
 			}
+			state = stateRepository.save(state);
+			
+			if (stateImg != null ) {
+				String urlPath=fileUrl+stateImgPath+ state.getId() + "/";
+				String filePath = staticFilePath+stateImgPath + state.getId() + "/";
+				isUploaded = commonUtil.writeImageFile(stateImg, filePath);
+				if (isUploaded) {
+						String fileName = stateImg.getOriginalFilename();
+						state.setStateImg(urlPath+fileName);
+					}else{
+						state.setStateImg(fileUrl+defaultFilePath);
+					}
+				}else{
+					state.setStateImg(fileUrl+defaultFilePath);
+				}
+				
 			state = stateRepository.save(state);
 		}catch (DataIntegrityViolationException e) {
 			throw new NeverStopExcpetion("State Name Already Exist");

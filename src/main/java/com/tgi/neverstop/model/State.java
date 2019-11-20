@@ -32,6 +32,9 @@ public class State implements Serializable {
 	@Column(name = "status")
 	private int status;
 	
+	@Column(name = "state_image")
+	private String stateImg;
+	
 	@NotBlank
 	@Column(name = "country_id", nullable = false)
 	private String countryId;
@@ -82,5 +85,15 @@ public class State implements Serializable {
 	public void setCountry(Country country) {
 		this.country = country;
 	}
+
+	public String getStateImg() {
+		return stateImg;
+	}
+
+	public void setStateImg(String stateImg) {
+		this.stateImg = stateImg;
+	}
+	
+	
 
 }
