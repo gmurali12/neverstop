@@ -84,7 +84,7 @@ public class EntityManagerImpl {
 		String METHOD_NAME = "saveEntity()";
 		logger.info(METHOD_NAME + "start : ");
 		Map<String, Double> values = new HashMap<>();
-		Boolean isUploaded = false;
+		boolean isUploaded = false;
 		try {
 			if (entity.getId() == null) {
 				entity.setId(CommonUtilities.generateRandomUUID());
@@ -141,7 +141,7 @@ public class EntityManagerImpl {
 
 		String METHOD_NAME = "saveEntity()";
 		logger.info(METHOD_NAME + "start : ");
-		Boolean isUploaded = false;
+		boolean isUploaded = false;
 		
 		if(entity.getId()!=null)
 		{
