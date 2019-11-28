@@ -135,8 +135,7 @@ public class CityController extends BaseController {
 	}
 
 	@PostMapping("/saveCity")
-	public ResponseEntity<?> saveCity(@RequestPart City city,
-			@RequestPart(value = "cityImg", required = false) MultipartFile cityImg) {
+	public ResponseEntity<?> saveCity(@Valid @RequestBody City city) {
 
 		String METHOD_NAME = "saveCity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -146,7 +145,7 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			city = cityManager.saveCity(city,cityImg);
+			city = cityManager.saveCity(city);
 			responseObjectsMap.put("CityVO", city);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -167,9 +166,43 @@ public class CityController extends BaseController {
 
 	}
 	
-	@PostMapping("/updateCity")
-	public ResponseEntity<?> updateCity(@RequestPart City city,
+	@PostMapping("/saveCityImage")
+	public ResponseEntity<?> saveCityImage(@RequestPart String cityId,
 			@RequestPart(value = "cityImg", required = false) MultipartFile cityImg) {
+
+		String METHOD_NAME = "saveCityImage()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		City city;
+
+		try {
+			city = cityManager.saveCityImage(cityId,cityImg);
+			responseObjectsMap.put("CityVO", city);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to save city.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+
+	
+	@PostMapping("/updateCity")
+	public ResponseEntity<?> updateCity(@Valid @RequestBody City city) {
 
 		String METHOD_NAME = "updateCity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -179,7 +212,7 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			city = cityManager.saveCity(city,cityImg);
+			city = cityManager.saveCity(city);
 			responseObjectsMap.put("CityVO", city);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

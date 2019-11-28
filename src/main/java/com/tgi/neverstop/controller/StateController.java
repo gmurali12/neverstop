@@ -142,8 +142,7 @@ public class StateController extends BaseController {
 	}
 
 	@PostMapping("/saveState")
-	public ResponseEntity<?> saveState(@RequestPart State state,
-			@RequestPart(value = "stateImg", required = false) MultipartFile stateImg) {
+	public ResponseEntity<?> saveState(@Valid @RequestBody State state) {
 
 		String METHOD_NAME = "saveState()";
 		logger.info(METHOD_NAME + "start : ");
@@ -153,7 +152,7 @@ public class StateController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			state = stateManager.saveState(state,stateImg);
+			state = stateManager.saveState(state);
 			responseObjectsMap.put("StateVO", state);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -174,10 +173,43 @@ public class StateController extends BaseController {
 		}
 
 	}
+	
+	@PostMapping("/saveStateImage")
+	public ResponseEntity<?> saveStateImage(@RequestPart String stateId,
+			@RequestPart(value = "stateImg", required = false) MultipartFile stateImg) {
+
+		String METHOD_NAME = "saveStateImage()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		State state;
+
+		try {
+			state = stateManager.saveStateImage(stateId,stateImg);
+			responseObjectsMap.put("StateVO", state);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to save state.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
 
 	@PostMapping("/updateState")
-	public ResponseEntity<?> updateState(@RequestPart State state,
-			@RequestPart(value = "stateImg", required = false) MultipartFile stateImg) {
+	public ResponseEntity<?> updateState(@Valid @RequestBody State state) {
 
 		String METHOD_NAME = "updateState()";
 		logger.info(METHOD_NAME + "start : ");
@@ -188,7 +220,7 @@ public class StateController extends BaseController {
 
 		try {
 			//state = stateManager.updateState(state);
-			state = stateManager.saveState(state,stateImg);
+			state = stateManager.saveState(state);
 			responseObjectsMap.put("StateVO", state);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

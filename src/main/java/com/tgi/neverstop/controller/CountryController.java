@@ -3,7 +3,7 @@ package com.tgi.neverstop.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +16,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.web.bind.annotation.RequestBody;
 import com.tgi.neverstop.manager.CountryManagerImpl;
+import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.model.ResponseVO;
 
@@ -138,8 +139,7 @@ public class CountryController extends BaseController {
 	}
 
 	@PostMapping("/saveCountry")
-	public ResponseEntity<?> saveCountry(@RequestPart Country country,
-			@RequestPart(value = "countryImg", required = false) MultipartFile countryImg) {
+	public ResponseEntity<?> saveCountry(@Valid @RequestBody Country country) {
 
 		String METHOD_NAME = "saveCountry()";
 		logger.info(METHOD_NAME + "start : ");
@@ -149,13 +149,14 @@ public class CountryController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			country = countryManager.saveCountry(country,countryImg);
+			country = countryManager.saveCountry(country);
+			
 			responseObjectsMap.put("CountryVO", country);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
-			msg = "Unable to save Country-"+re.getMessage();
+			msg = re.getMessage();
 		} catch (Throwable e) {
-			msg = "Unable to save Country-"+e.getMessage();
+			msg = "Unable to save continent.";
 			logger.error(e.getMessage());
 		}
 
@@ -170,9 +171,42 @@ public class CountryController extends BaseController {
 
 	}
 
-	@PostMapping("/updateCountry")
-	public ResponseEntity<?> updateCountry(@RequestPart Country country,
+	@PostMapping("/saveCountryImage")
+	public ResponseEntity<?> saveCountryImage(@RequestPart String countryId,
 			@RequestPart(value = "countryImg", required = false) MultipartFile countryImg) {
+
+		String METHOD_NAME = "saveCountryImage()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		Country country;
+
+		try {
+			country = countryManager.saveCountryImage(countryId,countryImg);
+			responseObjectsMap.put("CountryVO", country);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to save country.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
+	@PostMapping("/updateCountry")
+	public ResponseEntity<?> updateCountry(@Valid @RequestBody Country country) {
 
 		String METHOD_NAME = "updateCountry()";
 		logger.info(METHOD_NAME + "start : ");
@@ -183,7 +217,7 @@ public class CountryController extends BaseController {
 
 		try {
 			//country = countryManager.updateCountry(country,countryImg);
-			country = countryManager.saveCountry(country,countryImg);
+			country = countryManager.saveCountry(country);
 			responseObjectsMap.put("CountryVO", country);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

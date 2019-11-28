@@ -1,6 +1,7 @@
 package com.tgi.neverstop.manager;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
+import com.tgi.neverstop.model.Continent;
+import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.model.State;
 import com.tgi.neverstop.repository.StateRepository;
 import com.tgi.neverstop.util.CommonUtilities;
@@ -41,7 +44,7 @@ public class StateManagerImpl {
 	@Value("${neverstop.defaultimages.directory}")
 	private String defaultFilePath;
 
-	public State saveState(State state, MultipartFile stateImg) throws NeverStopExcpetion {
+	public State saveState(@Valid State state) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveState()";
 		logger.info(METHOD_NAME + "start : ");
@@ -51,23 +54,9 @@ public class StateManagerImpl {
 			if(state.getId() ==null ){
 				state.setId(CommonUtilities.generateRandomUUID());
 			}
+			state.setStateImg(fileUrl+defaultFilePath);
 			state = stateRepository.save(state);
 			
-			if (stateImg != null ) {
-				String urlPath=fileUrl+stateImgPath+ state.getId() + "/";
-				String filePath = staticFilePath+stateImgPath + state.getId() + "/";
-				isUploaded = commonUtil.writeImageFile(stateImg, filePath);
-				if (isUploaded) {
-						String fileName = stateImg.getOriginalFilename();
-						state.setStateImg(urlPath+fileName);
-					}else{
-						state.setStateImg(fileUrl+defaultFilePath);
-					}
-				}else{
-					state.setStateImg(fileUrl+defaultFilePath);
-				}
-				
-			state = stateRepository.save(state);
 		}catch (DataIntegrityViolationException e) {
 			throw new NeverStopExcpetion("State Name Already Exist");
 		    
@@ -85,6 +74,51 @@ public class StateManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return state;
 	}
+	
+	public State saveStateImage(String stateId, MultipartFile stateImg) throws NeverStopExcpetion {
+
+		String METHOD_NAME = "saveStateImage()";
+		logger.info(METHOD_NAME + "start : ");
+		boolean isUploaded =false;
+		State state = null;
+		try {
+
+			Optional<State> stateDetails = stateRepository.findById(stateId);
+			if (stateDetails != null && stateDetails.isPresent()) {
+				state = stateDetails.get();
+				//country = countryRepository.save(country);
+				if (stateImg != null ) {
+					String urlPath=fileUrl+stateImgPath+ state.getId() + "/";
+					String filePath = staticFilePath+stateImgPath + state.getId() + "/";
+					isUploaded = commonUtil.writeImageFile(stateImg, filePath);
+					if (isUploaded) {
+							String fileName = stateImg.getOriginalFilename();
+							state.setStateImg(urlPath+fileName);
+						}else{
+							state.setStateImg(fileUrl+defaultFilePath);
+						}
+					}else{
+						state.setStateImg(fileUrl+defaultFilePath);
+					}
+					
+				state = stateRepository.save(state);
+			}else {
+				throw new NeverStopExcpetion("Invalid State id");
+			}
+		
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+
+		}
+		logger.info(METHOD_NAME + "END");
+		return state;
+	}
+	
 
 	public List<State> getAllState() {
 

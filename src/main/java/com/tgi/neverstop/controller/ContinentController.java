@@ -25,6 +25,7 @@ import com.tgi.neverstop.manager.ContinentManagerImpl;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.model.ResponseVO;
+import com.tgi.neverstop.model.User;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -103,8 +104,7 @@ public class ContinentController extends BaseController {
 	}
 
 	@PostMapping("/saveContinent")
-	public ResponseEntity<?> saveContinent(	@RequestPart Continent continent,
-			@RequestPart(value = "continentImg", required = false) MultipartFile continentImg) {
+	public ResponseEntity<?> saveContinent(@Valid @RequestBody Continent continent) {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -114,7 +114,41 @@ public class ContinentController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			continent = continentManager.saveContinent(continent,continentImg);
+			continent = continentManager.saveContinent(continent);
+			responseObjectsMap.put("ContinentVO", continent);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to save continent.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
+	@PostMapping("/saveContinentImage")
+	public ResponseEntity<?> saveContinentImage(@RequestPart String continentId,
+			@RequestPart(value = "continentImg", required = false) MultipartFile continentImg) {
+
+		String METHOD_NAME = "updateContinent()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		Continent continent;
+
+		try {
+			continent = continentManager.saveContinentImage(continentId,continentImg);
 			responseObjectsMap.put("ContinentVO", continent);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -136,8 +170,7 @@ public class ContinentController extends BaseController {
 	}
 	
 	@PostMapping("/updateContinent")
-	public ResponseEntity<?> updateContinent(@RequestPart Continent continent,
-			@RequestPart(value = "continentImg", required = false) MultipartFile continentImg) {
+	public ResponseEntity<?> updateContinent(@Valid @RequestBody Continent continent) {
 
 		String METHOD_NAME = "updateContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -147,7 +180,7 @@ public class ContinentController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			continent = continentManager.saveContinent(continent,continentImg);
+			continent = continentManager.updateContinent(continent);
 			responseObjectsMap.put("ContinentVO", continent);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

@@ -1,6 +1,9 @@
 package com.tgi.neverstop.manager;
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Continent;
+import com.tgi.neverstop.model.EntityVO;
 import com.tgi.neverstop.repository.ContinentRepository;
 import com.tgi.neverstop.util.CommonUtilities;
 
@@ -41,36 +45,92 @@ public class ContinentManagerImpl {
 	@Value("${neverstop.defaultimages.directory}")
 	private String defaultFilePath;
 
-	public Continent saveContinent(Continent continent, MultipartFile continentImg) throws NeverStopExcpetion {
+	public Continent saveContinent(@Valid Continent continent) throws NeverStopExcpetion {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
-		boolean isUploaded =false;
 		try {
-
 			if(continent.getId() ==null ){
 				continent.setId(CommonUtilities.generateRandomUUID());
 			}
-			continent = continentRepository.save(continent);
-			if (continentImg != null ) {
-				String urlPath=fileUrl+continentImgPath+ continent.getId() + "/";
-				String filePath = staticFilePath+continentImgPath + continent.getId() + "/";
-				isUploaded = commonUtil.writeImageFile(continentImg, filePath);
-				if (isUploaded) {
-						String fileName = continentImg.getOriginalFilename();
-						continent.setContinentImg(urlPath+fileName);
-					}else{
-						continent.setContinentImg(fileUrl+defaultFilePath);
-					}
-				}else{
-					continent.setContinentImg(fileUrl+defaultFilePath);
-				}
-				
+			continent.setContinentImg(fileUrl+defaultFilePath);
 			continent = continentRepository.save(continent);
 			
 		}catch (DataIntegrityViolationException e) {
 			throw new NeverStopExcpetion("Continent Name Already Exist");
 		    
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+
+		}
+		logger.info(METHOD_NAME + "END");
+		return continent;
+	}
+	
+	public Continent updateContinent(@Valid Continent continent) throws NeverStopExcpetion {
+
+		String METHOD_NAME = "saveContinent()";
+		logger.info(METHOD_NAME + "start : ");
+		try {
+			if(continent.getId() ==null ){
+				continent.setId(CommonUtilities.generateRandomUUID());
+			}
+			//continent.setContinentImg(fileUrl+defaultFilePath);
+			continent = continentRepository.save(continent);
+			
+		}catch (DataIntegrityViolationException e) {
+			throw new NeverStopExcpetion("Continent Name Already Exist");
+		    
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			re.printStackTrace();
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+
+		}
+		logger.info(METHOD_NAME + "END");
+		return continent;
+	}
+	
+	
+	public Continent saveContinentImage(String continentId, MultipartFile continentImg) throws NeverStopExcpetion {
+
+		String METHOD_NAME = "saveContinentImage()";
+		logger.info(METHOD_NAME + "start : ");
+		boolean isUploaded =false;
+		Continent continent = null;
+		try {
+
+			Optional<Continent> continentDetails = continentRepository.findById(continentId);
+			if (continentDetails != null && continentDetails.isPresent()) {
+				continent = continentDetails.get();
+				//scontinent = continentRepository.save(continent);
+				if (continentImg != null ) {
+					String urlPath=fileUrl+continentImgPath+ continent.getId() + "/";
+					String filePath = staticFilePath+continentImgPath + continent.getId() + "/";
+					isUploaded = commonUtil.writeImageFile(continentImg, filePath);
+					if (isUploaded) {
+							String fileName = continentImg.getOriginalFilename();
+							continent.setContinentImg(urlPath+fileName);
+						}else{
+							continent.setContinentImg(fileUrl+defaultFilePath);
+						}
+					}else{
+						continent.setContinentImg(fileUrl+defaultFilePath);
+					}
+					
+				continent = continentRepository.save(continent);
+			}else {
+				throw new NeverStopExcpetion("Invalid Continent id");
+			}
+		
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
