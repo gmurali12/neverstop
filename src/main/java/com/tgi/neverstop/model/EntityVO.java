@@ -5,11 +5,12 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
-
 
 @Entity
 @Table(name = "entity")
@@ -80,7 +81,11 @@ public class EntityVO implements Serializable {
 
 	@Column(name = "hours")
 	private String hours;
-	
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "city_id", insertable = false, updatable = false)
+	private City cityVO;
+
 	@Transient
 	private Double ratingCount;
 
@@ -231,7 +236,13 @@ public class EntityVO implements Serializable {
 	public void setRatingCount(Double ratingCount) {
 		this.ratingCount = ratingCount;
 	}
-	
-	
+
+	public City getCityVO() {
+		return cityVO;
+	}
+
+	public void setCityVO(City cityVO) {
+		this.cityVO = cityVO;
+	}
 
 }
