@@ -169,6 +169,39 @@ public class ContinentController extends BaseController {
 
 	}
 	
+	@PostMapping("/deleteContinentImage")
+	public ResponseEntity<?> deleteContinentImage(@RequestPart String continentId) {
+
+		String METHOD_NAME = "updateContinent()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		Continent continent;
+
+		try {
+			continent = continentManager.deleteContinentImage(continentId);
+			responseObjectsMap.put("ContinentVO", continent);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to save continent.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
 	@PostMapping("/updateContinent")
 	public ResponseEntity<?> updateContinent(@Valid @RequestBody Continent continent) {
 

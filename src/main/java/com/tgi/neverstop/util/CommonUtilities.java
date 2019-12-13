@@ -137,7 +137,8 @@ public class CommonUtilities {
 
 		try {
 			File directory = new File(filePath);
-			if (!directory.exists()) {
+			if (!directory.exists()) 
+			{
 				directory.mkdir();
 				// If you require it to make the entire directory path including
 				// parents,
@@ -156,6 +157,16 @@ public class CommonUtilities {
 			stream.close();
 		}
 		return isUploaded;
+	}
+	
+	public void removeImageFile(String filePath) throws Exception, NeverStopExcpetion {
+		File directory = new File(filePath);
+		if (directory.exists()) 
+		{
+			FileUtils.cleanDirectory(directory); 
+		}else{
+			throw new NeverStopExcpetion("Image Not Found");
+		}
 	}
 
 	public JSONObject generateGeoJSON(EntityVO entity) {

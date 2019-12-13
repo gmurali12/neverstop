@@ -119,13 +119,11 @@ public class ContinentManagerImpl {
 					if (isUploaded) {
 							String fileName = continentImg.getOriginalFilename();
 							continent.setContinentImg(urlPath+fileName);
-						}else{
-							continent.setContinentImg(fileUrl+defaultFilePath);
 						}
 					}else{
-						continent.setContinentImg(fileUrl+defaultFilePath);
+						//continent.setContinentImg(fileUrl+defaultFilePath);
+						throw new NeverStopExcpetion("Continent Image not Found");
 					}
-					
 				continent = continentRepository.save(continent);
 			}else {
 				throw new NeverStopExcpetion("Invalid Continent id");
@@ -143,7 +141,29 @@ public class ContinentManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return continent;
 	}
-
+	
+	
+	public Continent deleteContinentImage(String continentId) throws NeverStopExcpetion { 
+		
+		Continent continent = null;
+		Optional<Continent> continentDetails = continentRepository.findById(continentId);
+		String filePath = staticFilePath+continentImgPath + continentId + "/";
+		if (continentDetails != null && continentDetails.isPresent()) 
+		{
+			continent = continentDetails.get();
+			continent.setContinentImg(null);
+			try{
+			commonUtil.removeImageFile(filePath);
+			}catch(Exception e){
+				throw new NeverStopExcpetion("Unable to Delete Image");
+			}
+			continentRepository.save(continent);
+			
+		}else{
+			throw new NeverStopExcpetion("Continent Not Found");
+		}
+		return continent;
+	}
 	public List<Continent> getAllContinent() {
 
 		String METHOD_NAME = "getAllContinent()";
@@ -210,4 +230,5 @@ public class ContinentManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return contList;
 	}
+
 }
