@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.manager.CityManagerImpl;
 import com.tgi.neverstop.model.City;
+import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.ResponseVO;
 import com.tgi.neverstop.model.State;
 
@@ -200,6 +201,38 @@ public class CityController extends BaseController {
 
 	}
 
+	@PostMapping("/deleteCityImage")
+	public ResponseEntity<?> deleteCityImage(@RequestPart String cityId) {
+
+		String METHOD_NAME = "updateCity()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		City city;
+
+		try {
+			city = cityManager.deleteCityImage(cityId);
+			responseObjectsMap.put("CityVO", city);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to Delete city.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
 	
 	@PostMapping("/updateCity")
 	public ResponseEntity<?> updateCity(@Valid @RequestBody City city) {

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.manager.StateManagerImpl;
+import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.model.ResponseVO;
 import com.tgi.neverstop.model.State;
@@ -194,6 +195,39 @@ public class StateController extends BaseController {
 			msg = re.getMessage();
 		} catch (Throwable e) {
 			msg = "Unable to save state.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
+	@PostMapping("/deleteStateImage")
+	public ResponseEntity<?> deleteStateImage(@RequestPart String stateId) {
+
+		String METHOD_NAME = "updateState()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		State state;
+
+		try {
+			state = stateManager.deleteStateImage(stateId);
+			responseObjectsMap.put("StateVO", state);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to Delete state.";
 			logger.error(e.getMessage());
 		}
 

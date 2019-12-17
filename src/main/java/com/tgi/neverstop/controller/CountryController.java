@@ -205,6 +205,39 @@ public class CountryController extends BaseController {
 
 	}
 	
+	@PostMapping("/deleteCountryImage")
+	public ResponseEntity<?> deleteCountryImage(@RequestPart String countryId) {
+
+		String METHOD_NAME = "updateCountry()";
+		logger.info(METHOD_NAME + "start : ");
+
+		String msg = null;
+		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		ResponseVO responseVO = new ResponseVO();
+		Country country;
+
+		try {
+			country = countryManager.deleteCountryImage(countryId);
+			responseObjectsMap.put("CountryVO", country);
+		} catch (RuntimeException re) {
+			logger.error(re.getMessage());
+			msg = re.getMessage();
+		} catch (Throwable e) {
+			msg = "Unable to Delete country.";
+			logger.error(e.getMessage());
+		}
+
+		logger.info(METHOD_NAME + "END");
+		if (null == msg) {
+			responseVO = createServiceResponse(responseObjectsMap);
+			return ResponseEntity.ok().body(responseVO);
+		} else {
+			responseVO = createServiceResponseError(responseObjectsMap, msg);
+			return ResponseEntity.ok().body(responseVO);
+		}
+
+	}
+	
 	@PostMapping("/updateCountry")
 	public ResponseEntity<?> updateCountry(@Valid @RequestBody Country country) {
 

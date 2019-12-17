@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.City;
+import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.State;
 import com.tgi.neverstop.repository.CityRepository;
 import com.tgi.neverstop.util.CommonUtilities;
@@ -53,7 +54,6 @@ public class CityManagerImpl {
 			if(city.getId() ==null ){
 				city.setId(CommonUtilities.generateRandomUUID());
 			}
-			city.setCityImg(fileUrl+defaultFilePath);
 
 			city = cityRepository.save(city);
 			
@@ -118,7 +118,27 @@ public class CityManagerImpl {
 		return city;
 	}
 	
-
+public City deleteCityImage(String cityId) throws NeverStopExcpetion { 
+		
+		City city = null;
+		Optional<City> cityDetails = cityRepository.findById(cityId);
+		String filePath = staticFilePath+cityImgPath + cityId + "/";
+		if (cityDetails != null && cityDetails.isPresent()) 
+		{
+			city = cityDetails.get();
+			city.setCityImg(null);
+			try{
+			commonUtil.removeImageFile(filePath);
+			}catch(Exception e){
+				throw new NeverStopExcpetion("Unable to Delete Image");
+			}
+			cityRepository.save(city);
+			
+		}else{
+			throw new NeverStopExcpetion("City Not Found");
+		}
+		return city;
+	}
 
 	public List<City> getAllCity() {
 
@@ -171,7 +191,7 @@ public class CityManagerImpl {
 
 		try {
 
-			cityList = cityRepository.findByStateId(stateId);
+			cityList = cityRepository.findAll();
 			
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

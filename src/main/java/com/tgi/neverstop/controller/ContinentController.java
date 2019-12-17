@@ -187,7 +187,7 @@ public class ContinentController extends BaseController {
 			logger.error(re.getMessage());
 			msg = re.getMessage();
 		} catch (Throwable e) {
-			msg = "Unable to save continent.";
+				msg = "Unable to Delete continent.";
 			logger.error(e.getMessage());
 		}
 

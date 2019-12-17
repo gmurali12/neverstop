@@ -53,7 +53,6 @@ public class ContinentManagerImpl {
 			if(continent.getId() ==null ){
 				continent.setId(CommonUtilities.generateRandomUUID());
 			}
-			continent.setContinentImg(fileUrl+defaultFilePath);
 			continent = continentRepository.save(continent);
 			
 		}catch (DataIntegrityViolationException e) {
@@ -148,21 +147,22 @@ public class ContinentManagerImpl {
 		Continent continent = null;
 		Optional<Continent> continentDetails = continentRepository.findById(continentId);
 		String filePath = staticFilePath+continentImgPath + continentId + "/";
-		if (continentDetails != null && continentDetails.isPresent()) 
-		{
-			continent = continentDetails.get();
-			continent.setContinentImg(null);
-			try{
-			commonUtil.removeImageFile(filePath);
-			}catch(Exception e){
-				throw new NeverStopExcpetion("Unable to Delete Image");
-			}
+				if (continentDetails != null && continentDetails.isPresent()) 
+				{
+					continent = continentDetails.get();
+					continent.setContinentImg(null);
+					try{
+				commonUtil.removeImageFile(filePath);
+				}catch(Exception e){
+					e.printStackTrace();
+					throw new NeverStopExcpetion("Unable to Delete Image");
+				}
 			continentRepository.save(continent);
 			
 		}else{
 			throw new NeverStopExcpetion("Continent Not Found");
 		}
-		return continent;
+		return continent;	
 	}
 	public List<Continent> getAllContinent() {
 

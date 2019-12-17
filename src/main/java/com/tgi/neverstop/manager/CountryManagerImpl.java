@@ -51,7 +51,6 @@ public class CountryManagerImpl {
 			if(country.getId() ==null ){
 			country.setId(CommonUtilities.generateRandomUUID());
 			}
-			country.setCountryImg(fileUrl+defaultFilePath);
 			country = countryRepository.save(country);
 			
 		}catch (DataIntegrityViolationException e) {
@@ -114,6 +113,27 @@ public class CountryManagerImpl {
 		return country;
 	}
 	
+public Country deleteCountryImage(String countryId) throws NeverStopExcpetion { 
+		
+		Country coutnry = null;
+		Optional<Country> countryDetails = countryRepository.findById(countryId);
+		String filePath = staticFilePath+countryImgPath + countryId + "/";
+		if (countryDetails != null && countryDetails.isPresent()) 
+		{
+			coutnry = countryDetails.get();
+			coutnry.setCountryImg(null);
+			try{
+			commonUtil.removeImageFile(filePath);
+			}catch(Exception e){
+				throw new NeverStopExcpetion("Unable to Delete Image");
+			}
+			countryRepository.save(coutnry);
+			
+		}else{
+			throw new NeverStopExcpetion("Country Not Found");
+		}
+		return coutnry;
+	}
 	
 	public List<Country> getAllCountry() {
 
@@ -145,7 +165,7 @@ public class CountryManagerImpl {
 
 		try {
 
-			countryList = countryRepository.findByContinentId(continentId);
+			countryList = countryRepository.findAll();
 
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

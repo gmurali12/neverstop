@@ -54,7 +54,6 @@ public class StateManagerImpl {
 			if(state.getId() ==null ){
 				state.setId(CommonUtilities.generateRandomUUID());
 			}
-			state.setStateImg(fileUrl+defaultFilePath);
 			state = stateRepository.save(state);
 			
 		}catch (DataIntegrityViolationException e) {
@@ -119,7 +118,28 @@ public class StateManagerImpl {
 		return state;
 	}
 	
-
+public State deleteStateImage(String stateId) throws NeverStopExcpetion { 
+		
+		State state = null;
+		Optional<State> stateDetails = stateRepository.findById(stateId);
+		String filePath = staticFilePath+stateImgPath + stateId + "/";
+		if (stateDetails != null && stateDetails.isPresent()) 
+		{
+			state = stateDetails.get();
+			state.setStateImg(null);
+			try{
+			commonUtil.removeImageFile(filePath);
+			}catch(Exception e){
+				throw new NeverStopExcpetion("Unable to Delete Image");
+			}
+			stateRepository.save(state);
+			
+		}else{
+			throw new NeverStopExcpetion("State Not Found");
+		}
+		return state;
+	}
+	
 	public List<State> getAllState() {
 
 		String METHOD_NAME = "getAllState()";
@@ -150,7 +170,7 @@ public class StateManagerImpl {
 
 		try {
 
-			stateList = stateRepository.findByCountryId(countryId);
+			stateList = stateRepository.findAll();
 
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
