@@ -253,8 +253,8 @@ public class StateController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			//state = stateManager.updateState(state);
-			state = stateManager.saveState(state);
+			state = stateManager.updateState(state);
+			//state = stateManager.saveState(state);
 			responseObjectsMap.put("StateVO", state);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

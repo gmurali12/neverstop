@@ -185,13 +185,22 @@ public State deleteStateImage(String stateId) throws NeverStopExcpetion {
 		return stateList;
 	}
 
-	public @Valid State updateState(@Valid State state) {
+	public  State updateState(@Valid State state) {
 		String METHOD_NAME = "updateState()";
 		logger.info(METHOD_NAME + "start : ");
 
 		try {
+			Optional<State> stateDetails = stateRepository.findById(state.getId());
 
+		if (stateDetails != null && stateDetails.isPresent()) 
+		{
+			State exisitingState = stateDetails.get();
+			state.setStateImg(exisitingState.getStateImg());
 			state = stateRepository.save(state);
+		}else {
+			throw new NeverStopExcpetion("State"
+					+ " Not Found");
+		}
 
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

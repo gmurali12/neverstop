@@ -249,8 +249,8 @@ public class CountryController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			//country = countryManager.updateCountry(country,countryImg);
-			country = countryManager.saveCountry(country);
+			country = countryManager.updateCountry(country);
+		//	country = countryManager.saveCountry(country);
 			responseObjectsMap.put("CountryVO", country);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

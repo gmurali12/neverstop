@@ -90,8 +90,6 @@ public class ContinentController extends BaseController {
 			msg = e.getMessage();
 			logger.error(e.getMessage());
 		} 
-		
-
 		logger.info(METHOD_NAME + "END");
 		if (null == msg) {
 			responseVO = createServiceResponse(responseObjectsMap);
@@ -219,7 +217,7 @@ public class ContinentController extends BaseController {
 			logger.error(re.getMessage());
 			msg = re.getMessage();
 		} catch (Throwable e) {
-			msg = "Unable to save continent.";
+			msg = "Unable to Update continent-"+e.getMessage();
 			logger.error(e.getMessage());
 		}
 

@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.City;
 import com.tgi.neverstop.model.Continent;
+import com.tgi.neverstop.model.Country;
 import com.tgi.neverstop.model.State;
 import com.tgi.neverstop.repository.CityRepository;
 import com.tgi.neverstop.util.CommonUtilities;
@@ -168,8 +169,15 @@ public City deleteCityImage(String cityId) throws NeverStopExcpetion {
 		logger.info(METHOD_NAME + "start : ");
 
 		try {
-
-			city = cityRepository.save(city);
+			Optional<City> cityDetails = cityRepository.findById(city.getId());
+			if (cityDetails != null && cityDetails.isPresent()) 
+			{
+				City exisitingCity = cityDetails.get();
+				city.setCityImg(exisitingCity.getCityImg());
+				city = cityRepository.save(city);
+			}else {
+				throw new NeverStopExcpetion("City Not Found");
+			}
 
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());

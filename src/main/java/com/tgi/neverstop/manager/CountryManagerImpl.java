@@ -180,13 +180,21 @@ public Country deleteCountryImage(String countryId) throws NeverStopExcpetion {
 		return countryList;
 	}
 
-	public @Valid Country updateCountry(@Valid Country country) throws NeverStopExcpetion {
+	public Country updateCountry(@Valid Country country) throws NeverStopExcpetion {
 		String METHOD_NAME = "updateCountry()";
 		logger.info(METHOD_NAME + "start : ");
 
 		try {
-           
-			country = countryRepository.save(country);
+			Optional<Country> countryDetails = countryRepository.findById(country.getId());
+
+			if (countryDetails != null && countryDetails.isPresent()) 
+			{
+				Country exisitingCountry = countryDetails.get();
+				country.setCountryImg(exisitingCountry.getCountryImg());
+				country = countryRepository.save(country);
+			}else {
+				throw new NeverStopExcpetion("Country Not Found");
+			}
 
 		} catch (DataIntegrityViolationException e) {
 			throw new NeverStopExcpetion("Country Name Already Exist");
@@ -195,11 +203,6 @@ public Country deleteCountryImage(String countryId) throws NeverStopExcpetion {
 			logger.error(re.getMessage());
 			//re.printStackTrace();
 			throw new NeverStopExcpetion(re.getMessage());
-
-		} catch (Throwable e) {
-			//e.printStackTrace();
-			logger.error(e.getMessage());
-			throw new NeverStopExcpetion(e.getMessage());
 
 		}
 		logger.info(METHOD_NAME + "END");

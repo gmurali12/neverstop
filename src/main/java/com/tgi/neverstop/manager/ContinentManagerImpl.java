@@ -79,8 +79,17 @@ public class ContinentManagerImpl {
 			if(continent.getId() ==null ){
 				continent.setId(CommonUtilities.generateRandomUUID());
 			}
+			Optional<Continent> continentDetails = continentRepository.findById(continent.getId());
+			if (continentDetails != null && continentDetails.isPresent()) 
+			{
+				Continent exisitingContinent = continentDetails.get();
+				continent.setContinentImg(exisitingContinent.getContinentImg());
+				continent = continentRepository.save(continent);
+			}else {
+				throw new NeverStopExcpetion("Continent Not Found");
+			}
 			//continent.setContinentImg(fileUrl+defaultFilePath);
-			continent = continentRepository.save(continent);
+			
 			
 		}catch (DataIntegrityViolationException e) {
 			throw new NeverStopExcpetion("Continent Name Already Exist");
@@ -88,10 +97,6 @@ public class ContinentManagerImpl {
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
 
 		}
 		logger.info(METHOD_NAME + "END");

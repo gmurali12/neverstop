@@ -245,7 +245,7 @@ public class CityController extends BaseController {
 		ResponseVO responseVO = new ResponseVO();
 
 		try {
-			city = cityManager.saveCity(city);
+			city = cityManager.updateCity(city);
 			responseObjectsMap.put("CityVO", city);
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
