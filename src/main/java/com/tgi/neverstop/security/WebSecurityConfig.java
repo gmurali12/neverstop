@@ -61,6 +61,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/auth/**").permitAll()
                 .antMatchers("/geojson/**").permitAll()
                 .antMatchers("/images/**").permitAll()
+                .antMatchers( 
+              		   "/swagger-resources/**"
+              		   ,"/webjars/**"
+              		  , "/swagger-ui.html"
+              		   ,"/v2/**"
+              		   ).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
