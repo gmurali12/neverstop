@@ -58,7 +58,10 @@ public class LoginController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
+		
+		/* Added comments to this step
+		 * 
+		 */
 		try {
 			userDetails = loginManager.login(username, password);
 			
