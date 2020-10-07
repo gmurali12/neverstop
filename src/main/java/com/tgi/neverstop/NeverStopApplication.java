@@ -24,7 +24,7 @@ public class NeverStopApplication {
 	}
 	
 	@Bean
-	   public Docket trainingApi() {
+	   public Docket api() {
 	        return new Docket(DocumentationType.SWAGGER_2)
 	                .securitySchemes(Collections.singletonList(new ApiKey("JWT", "Authorization", "header")))
 	                .securityContexts(Collections.singletonList(
