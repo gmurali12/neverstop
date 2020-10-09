@@ -49,49 +49,32 @@ public class LoginController extends BaseController {
 	UserManagerImpl userManager;
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
+	public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password)  {
 
-		String METHOD_NAME = "login()";
+		String METHOD_NAME = "LoginController:login()";
 		logger.info(METHOD_NAME + "start : ");
 		
 		UserDetails userDetails = null;
-		String msg = null;
+		
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 		
-		/* Added comments to this step
-		 * 
-		 */
-		try {
-			userDetails = loginManager.login(username, password);
-			
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = e.getMessage();
-			logger.error(e.getMessage());
-		}
+		userDetails = loginManager.login(username, password);
+	
+		responseObjectsMap.put("UserDetails", userDetails);
+		responseObjectsMap.put("accessToken", populateToken(username,password));
+		responseObjectsMap.put("tokenType", "Bearer");
 
+		responseVO = createServiceResponse(responseObjectsMap);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseObjectsMap.put("UserDetails", userDetails);
-			responseObjectsMap.put("accessToken", populateToken(username,password));
-			responseObjectsMap.put("tokenType", "Bearer");
-
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		return ResponseEntity.ok().body(responseVO);
 
 	}
 	
 	@PostMapping("/adminLogin")
 	public ResponseEntity<?> adminLogin(@RequestParam String username, @RequestParam String password) {
 
-		String METHOD_NAME = "login()";
+		String METHOD_NAME = "LoginController:adminLogin()";
 		logger.info(METHOD_NAME + "start : ");
 		
 		UserDetails userDetails = null;
@@ -153,39 +136,25 @@ public class LoginController extends BaseController {
 	@PostMapping("/registerUser")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
 
-		String METHOD_NAME = "registerUser()";
+		String METHOD_NAME = "LoginController:registerUser()";
 		logger.info(METHOD_NAME + "start : ");
 
-		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 
-		try {
-			user = userManager.saveUser(user);
-			responseObjectsMap.put("UserVO", user);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to register user.";
-		} catch (Throwable e) {
-			msg = e.getMessage();
-			logger.error(e.getMessage());
-		}
-
+		user = userManager.saveUser(user);
+		responseObjectsMap.put("UserVO", user);
+		responseVO = createServiceResponse(responseObjectsMap);
+		
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		return ResponseEntity.ok().body(responseVO);
 
 	}
 	
 	@PostMapping("/forgetPassword")
 	public ResponseEntity<?> forgetPassword(@RequestParam String username) {
 
-		String METHOD_NAME = "registerUser()";
+		String METHOD_NAME = "LoginController:registerUser()";
 		logger.info(METHOD_NAME + "start : ");
 
 		String msg = null;
