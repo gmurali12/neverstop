@@ -1,6 +1,7 @@
 package com.tgi.neverstop.exception;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.tgi.neverstop.controller.BaseController;
+import com.tgi.neverstop.model.ResponseVO;
 
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -49,5 +53,14 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		return new ResponseEntity<>(body, headers, status);
 
 	}
+	
+	  @ExceptionHandler(value = Exception.class)  
+	    public ResponseEntity<?> handleException(Exception e){
+		  Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
+		  ResponseVO responseVO = new ResponseVO();
+		  BaseController baseCtrl = new BaseController();
+		  responseVO = baseCtrl.createServiceResponseError(responseObjectsMap, e.getMessage());
+		  return ResponseEntity.ok().body(responseVO);
+		  }  
 
 }
