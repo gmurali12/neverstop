@@ -33,7 +33,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(BusinessException.class)
 	public final ResponseEntity<Object> handleAllExceptions(BusinessException ex) {
-		CustomException exceptionResponse = new CustomException(ex.getErrorcode(), ex.getErrorMessage());
+		CustomException exceptionResponse = new CustomException(ex.getErrorMessage());
 		return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
