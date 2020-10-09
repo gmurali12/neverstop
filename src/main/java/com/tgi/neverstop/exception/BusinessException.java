@@ -11,10 +11,10 @@ public class BusinessException extends RuntimeException implements Serializable 
 
 	}
 
-	public BusinessException(String errorMessage, String errorcode) {
+	public BusinessException(String errorcode, String errorMessage) {
 
-		this.errorMessage = errorMessage;
 		this.errorcode = errorcode;
+		this.errorMessage = errorMessage;
 	}
 
 	public String getErrorMessage() {

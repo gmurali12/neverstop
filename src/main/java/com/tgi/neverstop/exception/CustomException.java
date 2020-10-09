@@ -9,10 +9,10 @@ public class CustomException {
 
 	}
 
-	public CustomException(String errorMessage, String errorcode) {
+	public CustomException(String errorcode, String errorMessage) {
 
-		this.errorMessage = errorMessage;
 		this.errorcode = errorcode;
+		this.errorMessage = errorMessage;
 	}
 
 	public String getErrorMessage() {
