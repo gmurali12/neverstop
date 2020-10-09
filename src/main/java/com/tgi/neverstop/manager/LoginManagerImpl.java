@@ -1,7 +1,6 @@
 package com.tgi.neverstop.manager;
 
 import java.util.Optional;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.tgi.neverstop.controller.UserController;
+import com.tgi.neverstop.exception.BusinessException;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Role;
 import com.tgi.neverstop.model.RoleName;
@@ -34,13 +34,13 @@ public class LoginManagerImpl {
 	@Autowired
 	PasswordEncoder encoder;
 
-	public UserDetails login(String userName, String password) throws NeverStopExcpetion {
+	public UserDetails login(String userName, String password) throws BusinessException {
 
 		String METHOD_NAME = "login()";
 		logger.info(METHOD_NAME + "start : ");
 		UserDetails userDetails = null;
 
-		Optional<User> userDetail = userRepository.findByUsername(userName);
+		Optional<User> userDetail = Optional.ofNullable(userRepository.findByUsername(userName).orElseThrow(BusinessException::new));
 
 		if (userDetail != null && userDetail.isPresent()) {
 
@@ -48,13 +48,13 @@ public class LoginManagerImpl {
 			boolean status = validatePassword(user, password);
 
 			if (!status) {
-				throw new NeverStopExcpetion("Invalid Username Or Password.");
+				throw new BusinessException("Invalid Username Or Password.");
 			} else {
 				userDetails = UserPrinciple.build(user);
 			}
 
 		} else {
-			throw new NeverStopExcpetion("Invalid Username Or Password.");
+			throw new BusinessException("Invalid Username Or Password.");
 		}
 
 		logger.info(METHOD_NAME + "END");
@@ -97,8 +97,8 @@ public class LoginManagerImpl {
 		return userDetails;
 	}
 
-	public boolean validatePassword(User user, String password)
-			throws NeverStopExcpetion {
+	public boolean validatePassword(User user, String password) throws BusinessException
+			 {
 
 		boolean status = false;
 
@@ -106,8 +106,7 @@ public class LoginManagerImpl {
 
 			logger.info("validatePassword:" + password);
 			if (!encoder.matches(password, user.getPassword())) {
-				throw new NeverStopExcpetion(
-						"Invalid Username Or Password.");
+				throw new BusinessException("Invalid Username Or Password.");
 			} else {
 				status = true;
 			}

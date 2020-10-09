@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.tgi.neverstop.controller.UserController;
+import com.tgi.neverstop.exception.BusinessException;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Role;
 import com.tgi.neverstop.model.RoleName;
@@ -70,36 +71,22 @@ public class UserManagerImpl {
 		return userList;
 	}
 
-	public User saveUser(User user) throws NeverStopExcpetion {
+	public User saveUser(User user) throws BusinessException {
 		String METHOD_NAME = "saveUser()";
 		logger.info(METHOD_NAME + "start : ");
 		boolean isUserNameExist=false;
 
-		try {
 			if(user.getPassword()!=null){
 				isUserNameExist=userRepository.existsByUsername(user.getUsername());
 				if(!isUserNameExist){
 					setDefaultValues(user);
 					user = userRepository.save(user);
 				}else{
-					throw new NeverStopExcpetion(userExistErroMsg);
+					throw new BusinessException(userExistErroMsg);
 				}
 			}else{
-				throw new NeverStopExcpetion("Mandatory field is Missing-Password");
+				throw new BusinessException("Mandatory field is Missing-Password");
 			}
-			
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			re.printStackTrace();
-			throw new NeverStopExcpetion("Error While Creating user."+re.getMessage());
-		
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-			throw new NeverStopExcpetion("Error While Creating user."+e.getMessage());
-
-		}
 		logger.info(METHOD_NAME + "End: ");
 		return user;
 	}
