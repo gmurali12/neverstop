@@ -48,6 +48,7 @@ public class LoginController extends BaseController {
 	@Autowired
 	UserManagerImpl userManager;
 
+
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password)  {
 
@@ -81,31 +82,15 @@ public class LoginController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
+		userDetails = loginManager.adminLogin(username, password);
+		responseObjectsMap.put("UserDetails", userDetails);
+		responseObjectsMap.put("accessToken", populateToken(username,password));
+		responseObjectsMap.put("tokenType", "Bearer");
 
-		try {
-			userDetails = loginManager.adminLogin(username, password);
-			
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = e.getMessage();
-			logger.error(e.getMessage());
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseObjectsMap.put("UserDetails", userDetails);
-			responseObjectsMap.put("accessToken", populateToken(username,password));
-			responseObjectsMap.put("tokenType", "Bearer");
-
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/generateToken")
@@ -160,29 +145,12 @@ public class LoginController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			User user=userManager.forgetPassword(username);
-			responseObjectsMap.put("UserVO", user);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = ""
-					+ ".";
-		} catch (Throwable e) {
-			msg = "Error while setting password.";
-			logger.error(e.getMessage());
-		}
-
+		User user=userManager.forgetPassword(username);
+		responseObjectsMap.put("UserVO", user);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
-
 
 }

@@ -61,13 +61,12 @@ public class LoginManagerImpl {
 		return userDetails;
 	}
 	
-	public UserDetails adminLogin(String username, String password) throws NeverStopExcpetion {
+	public UserDetails adminLogin(String username, String password) throws BusinessException {
 		String METHOD_NAME = "adminLogin()";
 		logger.info(METHOD_NAME + "start : ");
 		UserDetails userDetails = null;
-
-		Optional<User> userDetail = userRepository.findByUsername(username);
-
+		
+		Optional<User> userDetail = Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(BusinessException::new));
 		if (userDetail != null && userDetail.isPresent()) 
 		{
 
@@ -78,19 +77,19 @@ public class LoginManagerImpl {
 				System.out.println("Role>>>"+role.getName());
 				if(!role.getName().equals(RoleName.ROLE_ADMIN))
 				{
-					throw new NeverStopExcpetion("Invalid Username Or Password.");
+					throw new BusinessException("Invalid Username Or Password.");
 				}
 			}
 			boolean status = validatePassword(user, password);
 			if (!status) 
 			{
-				throw new NeverStopExcpetion("Invalid Username Or Password.");
+				throw new BusinessException("Invalid Username Or Password.");
 			} else {
 				userDetails = UserPrinciple.build(user);
 			}
 
 		} else {
-			throw new NeverStopExcpetion("Invalid Username Or Password.");
+			throw new BusinessException("Invalid Username Or Password.");
 		}
 
 		logger.info(METHOD_NAME + "END");
