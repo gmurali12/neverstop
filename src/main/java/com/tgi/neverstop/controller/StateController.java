@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tgi.neverstop.exception.BusinessException;
+import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.manager.StateManagerImpl;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
@@ -46,27 +48,12 @@ public class StateController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<State> stateList = stateManager.getAllState();
-			responseObjectsMap.put("StateList", stateList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to select State.";
-		} catch (Throwable e) {
-			msg = "Unable to select State.";
-			logger.error(e.getMessage());
-		}
-
+		List<State> stateList = stateManager.getAllState();
+		responseObjectsMap.put("StateList", stateList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 	
 	@PostMapping("/searchByName")
@@ -78,33 +65,17 @@ public class StateController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<State> stateList = stateManager.searchbyName(stateName);
-			responseObjectsMap.put("StateList", stateList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = e.getMessage();
-			logger.error(e.getMessage());
-		} 
-		
-
+		List<State> stateList = stateManager.searchbyName(stateName);
+		responseObjectsMap.put("StateList", stateList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/getStateByCountryId")
 	public ResponseEntity<?> getStateByCountryId(
-			@RequestParam String countryId) {
+			@RequestParam String countryId) throws Exception {
 
 		String METHOD_NAME = "getStateByCountryId()";
 		logger.info(METHOD_NAME + "start : ");
@@ -112,34 +83,17 @@ public class StateController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-
-			if (countryId != null) {
+		if (countryId != null) {
 
 				List<State> stateList = stateManager
 						.getStateByCountryId(countryId);
 				responseObjectsMap.put("StateList", stateList);
-			} else {
+		} else {
 				throw new Exception("Invalid Request.");
 			}
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to select State.";
-		} catch (Throwable e) {
-			msg = "Unable to select State.";
-			logger.error(e.getMessage());
-		}
-
-		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/saveState")
@@ -151,28 +105,12 @@ public class StateController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			state = stateManager.saveState(state);
-			responseObjectsMap.put("StateVO", state);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to save State-"+re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to save State-"+e.getMessage();
-			logger.error(e.getMessage());
-		}
-
-		
+		state = stateManager.saveState(state);
+		responseObjectsMap.put("StateVO", state);	
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 	
 	@PostMapping("/saveStateImage")
@@ -186,31 +124,17 @@ public class StateController extends BaseController {
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 		State state;
-
-		try {
-			state = stateManager.saveStateImage(stateId,stateImg);
-			responseObjectsMap.put("StateVO", state);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to save state.";
-			logger.error(e.getMessage());
-		}
-
+		state = stateManager.saveStateImage(stateId,stateImg);
+		responseObjectsMap.put("StateVO", state);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 
 	}
 	
 	@PostMapping("/deleteStateImage")
-	public ResponseEntity<?> deleteStateImage(@RequestPart String stateId) {
+	public ResponseEntity<?> deleteStateImage(@RequestPart String stateId) throws BusinessException, NeverStopExcpetion {
 
 		String METHOD_NAME = "updateState()";
 		logger.info(METHOD_NAME + "start : ");
@@ -219,27 +143,12 @@ public class StateController extends BaseController {
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 		State state;
-
-		try {
-			state = stateManager.deleteStateImage(stateId);
-			responseObjectsMap.put("StateVO", state);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to Delete state.";
-			logger.error(e.getMessage());
-		}
-
+		state = stateManager.deleteStateImage(stateId);
+		responseObjectsMap.put("StateVO", state);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/updateState")
@@ -251,27 +160,13 @@ public class StateController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			state = stateManager.updateState(state);
-			//state = stateManager.saveState(state);
-			responseObjectsMap.put("StateVO", state);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to save State.";
-		} catch (Throwable e) {
-			msg = "Unable to save State.";
-			logger.error(e.getMessage());
-		}
-
+		state = stateManager.updateState(state);
+		//state = stateManager.saveState(state);
+		responseObjectsMap.put("StateVO", state);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/getStateById")
@@ -283,26 +178,12 @@ public class StateController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			State state = stateManager.findById(stateId);
-			responseObjectsMap.put("StateVO", state);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to update State.";
-		} catch (Throwable e) {
-			msg = "Unable to update State.";
-			logger.error(e.getMessage());
-		}
-
+		State state = stateManager.findById(stateId);
+		responseObjectsMap.put("StateVO", state);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+	
 	}
 
 }

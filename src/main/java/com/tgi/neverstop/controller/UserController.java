@@ -39,96 +39,46 @@ public class UserController extends BaseController {
 
 		String METHOD_NAME = "getAllUsers()";
 		logger.info(METHOD_NAME + "start : ");
-
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<User> userList = userManager.getAllUsers();
-			responseObjectsMap.put("UserList", userList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to get userList.";
-			logger.error(e.getMessage());
-		}
-
+		List<User> userList = userManager.getAllUsers();
+		responseObjectsMap.put("UserList", userList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 
-	}
+		}
 
 	@PostMapping("/updateProfile")
 	public ResponseEntity<?> updateProfile(@RequestParam String userId,@RequestParam String name) {
 
 		String METHOD_NAME = "updateProfile()";
 		logger.info(METHOD_NAME + "start : ");
-
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			User user = userManager.updateUserProfile(userId,name);
-			responseObjectsMap.put("userVO", user);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to get userList.";
-			logger.error(e.getMessage());
-		}
-
+        User user = userManager.updateUserProfile(userId,name);
+		responseObjectsMap.put("userVO", user);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
 		}
-
-	}
 	
 	@PostMapping("/updatePassword")
 	public ResponseEntity<?> updatePassword(@RequestParam String username,@RequestParam String newPassword) {
 
 		String METHOD_NAME = "registerUser()";
 		logger.info(METHOD_NAME + "start : ");
-
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			User user=userManager.updatePassword(username,newPassword);
-			responseObjectsMap.put("UserVO", user);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to register user.";
-		} catch (Throwable e) {
-			msg = "Unable to register user.";
-			logger.error(e.getMessage());
-		}
-
+		User user=userManager.updatePassword(username,newPassword);
+		responseObjectsMap.put("UserVO", user);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
 
 	}
 	
@@ -137,31 +87,15 @@ public class UserController extends BaseController {
 
 		String METHOD_NAME = "getUserById()";
 		logger.info(METHOD_NAME + "start : ");
-
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			User user = userManager.findById(id);
-			responseObjectsMap.put("UserVO", user);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to select User.";
-		} catch (Throwable e) {
-			msg = "Unable to select User.";
-			logger.error(e.getMessage());
-		}
-
+		User user = userManager.findById(id);
+		responseObjectsMap.put("UserVO", user);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 }

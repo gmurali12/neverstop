@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tgi.neverstop.exception.BusinessException;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
@@ -44,7 +45,7 @@ public class StateManagerImpl {
 	@Value("${neverstop.defaultimages.directory}")
 	private String defaultFilePath;
 
-	public State saveState(@Valid State state) throws NeverStopExcpetion {
+	public State saveState(@Valid State state) throws BusinessException {
 
 		String METHOD_NAME = "saveState()";
 		logger.info(METHOD_NAME + "start : ");
@@ -57,24 +58,24 @@ public class StateManagerImpl {
 			state = stateRepository.save(state);
 			
 		}catch (DataIntegrityViolationException e) {
-			throw new NeverStopExcpetion("State Name Already Exist");
+			throw new BusinessException("State Name Already Exist");
 		    
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			//re.printStackTrace();
-			throw new NeverStopExcpetion(re.getMessage());
+			throw new BusinessException(re.getMessage());
 
 		} catch (Throwable e) {
 			//e.printStackTrace();
 			logger.error(e.getMessage());
-			throw new NeverStopExcpetion(e.getMessage());
+			throw new BusinessException(e.getMessage());
 
 		}
 		logger.info(METHOD_NAME + "END");
 		return state;
 	}
 	
-	public State saveStateImage(String stateId, MultipartFile stateImg) throws NeverStopExcpetion {
+	public State saveStateImage(String stateId, MultipartFile stateImg) throws BusinessException {
 
 		String METHOD_NAME = "saveStateImage()";
 		logger.info(METHOD_NAME + "start : ");
@@ -102,7 +103,7 @@ public class StateManagerImpl {
 					
 				state = stateRepository.save(state);
 			}else {
-				throw new NeverStopExcpetion("Invalid State id");
+				throw new BusinessException("Invalid State id");
 			}
 		
 		} catch (RuntimeException re) {
@@ -118,7 +119,7 @@ public class StateManagerImpl {
 		return state;
 	}
 	
-public State deleteStateImage(String stateId) throws NeverStopExcpetion { 
+public State deleteStateImage(String stateId) throws BusinessException, NeverStopExcpetion { 
 		
 		State state = null;
 		Optional<State> stateDetails = stateRepository.findById(stateId);
@@ -130,12 +131,12 @@ public State deleteStateImage(String stateId) throws NeverStopExcpetion {
 			try{
 			commonUtil.removeImageFile(filePath);
 			}catch(Exception e){
-				throw new NeverStopExcpetion("Unable to Delete Image");
+				throw new BusinessException("Unable to Delete Image");
 			}
 			stateRepository.save(state);
 			
 		}else{
-			throw new NeverStopExcpetion("State Not Found");
+			throw new BusinessException("State Not Found");
 		}
 		return state;
 	}
@@ -198,7 +199,7 @@ public State deleteStateImage(String stateId) throws NeverStopExcpetion {
 			state.setStateImg(exisitingState.getStateImg());
 			state = stateRepository.save(state);
 		}else {
-			throw new NeverStopExcpetion("State"
+			throw new BusinessException("State"
 					+ " Not Found");
 		}
 
@@ -237,7 +238,7 @@ public State deleteStateImage(String stateId) throws NeverStopExcpetion {
 		return state;
 	}
 
-	public List<State> searchbyName(String stateName) throws NeverStopExcpetion {
+	public List<State> searchbyName(String stateName) throws BusinessException {
 		String METHOD_NAME = "searchbyName()";
 		logger.info(METHOD_NAME + "start : ");
 		List<State> stateList = null;
@@ -246,7 +247,7 @@ public State deleteStateImage(String stateId) throws NeverStopExcpetion {
 
 			stateList = stateRepository.searchbyName(stateName);
 			if (null == stateList || stateList.isEmpty()) {
-				throw new NeverStopExcpetion("State Not Found");
+				throw new BusinessException("State Not Found");
 			}
 
 		} catch (RuntimeException re) {
@@ -257,4 +258,5 @@ public State deleteStateImage(String stateId) throws NeverStopExcpetion {
 		logger.info(METHOD_NAME + "END");
 		return stateList;
 	}
+	
 }

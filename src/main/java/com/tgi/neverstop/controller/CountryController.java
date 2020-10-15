@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import com.tgi.neverstop.exception.BusinessException;
 import com.tgi.neverstop.manager.CountryManagerImpl;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.Country;
@@ -38,31 +40,15 @@ public class CountryController extends BaseController {
 
 		String METHOD_NAME = "getAllCountry()";
 		logger.info(METHOD_NAME + "start : ");
-
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<Country> countryList = countryManager.getAllCountry();
-			responseObjectsMap.put("CountryList", countryList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to select Country.";
-		} catch (Throwable e) {
-			msg = "Unable to select Country.";
-			logger.error(e.getMessage());
-		}
-
+        List<Country> countryList = countryManager.getAllCountry();
+		responseObjectsMap.put("CountryList", countryList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+	
 	}
 	
 	@PostMapping("/searchByName")
@@ -70,37 +56,20 @@ public class CountryController extends BaseController {
 
 		String METHOD_NAME = "searchbyName()";
 		logger.info(METHOD_NAME + "start : ");
-
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<Country> countrytList = countryManager.searchbyName(countryName);
-			responseObjectsMap.put("CountryList", countrytList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = e.getMessage();
-			logger.error(e.getMessage());
-		} 
-		
-
+		List<Country> countrytList = countryManager.searchbyName(countryName);
+		responseObjectsMap.put("CountryList", countrytList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/getCountryByContinentId")
 	public ResponseEntity<?> getCountryByContinentId(
-			@RequestParam String continentId) {
+			@RequestParam String continentId) throws Exception {
 
 		String METHOD_NAME = "getCountryByContinentId()";
 		logger.info(METHOD_NAME + "start : ");
@@ -108,33 +77,17 @@ public class CountryController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-
-			if (continentId != null) {
-
+		if (continentId != null) {
 				List<Country> countryList = countryManager
 						.getCountryByContinentId(continentId);
 				responseObjectsMap.put("CountryList", countryList);
 			} else {
 				throw new Exception("Invalid Request.");
 			}
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to select Country.";
-		} catch (Throwable e) {
-			msg = "Unable to select Country.";
-			logger.error(e.getMessage());
-		}
-
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+
 
 	}
 
@@ -147,27 +100,12 @@ public class CountryController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			country = countryManager.saveCountry(country);
-			
-			responseObjectsMap.put("CountryVO", country);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to save continent.";
-			logger.error(e.getMessage());
-		}
-
+		country = countryManager.saveCountry(country);
+		responseObjectsMap.put("CountryVO", country);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 
 	}
 
@@ -182,31 +120,16 @@ public class CountryController extends BaseController {
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 		Country country;
-
-		try {
-			country = countryManager.saveCountryImage(countryId,countryImg);
-			responseObjectsMap.put("CountryVO", country);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to save country.";
-			logger.error(e.getMessage());
-		}
-
+		country = countryManager.saveCountryImage(countryId,countryImg);
+		responseObjectsMap.put("CountryVO", country);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
 
 	}
 	
 	@PostMapping("/deleteCountryImage")
-	public ResponseEntity<?> deleteCountryImage(@RequestPart String countryId) {
+	public ResponseEntity<?> deleteCountryImage(@RequestPart String countryId) throws BusinessException, Throwable {
 
 		String METHOD_NAME = "updateCountry()";
 		logger.info(METHOD_NAME + "start : ");
@@ -215,27 +138,12 @@ public class CountryController extends BaseController {
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 		Country country;
-
-		try {
-			country = countryManager.deleteCountryImage(countryId);
-			responseObjectsMap.put("CountryVO", country);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to Delete country.";
-			logger.error(e.getMessage());
-		}
-
+		country = countryManager.deleteCountryImage(countryId);
+		responseObjectsMap.put("CountryVO", country);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 	
 	@PostMapping("/updateCountry")
@@ -247,27 +155,12 @@ public class CountryController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			country = countryManager.updateCountry(country);
-		//	country = countryManager.saveCountry(country);
-			responseObjectsMap.put("CountryVO", country);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to Update Country-"+re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to Update Country."+e.getMessage();
-			logger.error(e.getMessage());
-		}
-
+		country = countryManager.updateCountry(country);
+		responseObjectsMap.put("CountryVO", country);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/getCountryById")
@@ -279,26 +172,12 @@ public class CountryController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			Country country = countryManager.findById(countryId);
-			responseObjectsMap.put("CountryVO", country);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to save Country.";
-		} catch (Throwable e) {
-			msg = "Unable to save Country.";
-			logger.error(e.getMessage());
-		}
-
+		Country country = countryManager.findById(countryId);
+		responseObjectsMap.put("CountryVO", country);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 }

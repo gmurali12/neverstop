@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tgi.neverstop.exception.BusinessException;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.Continent;
 import com.tgi.neverstop.model.EntityVO;
@@ -45,7 +46,7 @@ public class ContinentManagerImpl {
 	@Value("${neverstop.defaultimages.directory}")
 	private String defaultFilePath;
 
-	public Continent saveContinent(@Valid Continent continent) throws NeverStopExcpetion {
+	public Continent saveContinent(@Valid Continent continent) throws BusinessException {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -56,7 +57,7 @@ public class ContinentManagerImpl {
 			continent = continentRepository.save(continent);
 			
 		}catch (DataIntegrityViolationException e) {
-			throw new NeverStopExcpetion("Continent Name Already Exist");
+			throw new BusinessException("Continent Name Already Exist");
 		    
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -71,7 +72,7 @@ public class ContinentManagerImpl {
 		return continent;
 	}
 	
-	public Continent updateContinent(@Valid Continent continent) throws NeverStopExcpetion {
+	public Continent updateContinent(@Valid Continent continent) throws BusinessException {
 
 		String METHOD_NAME = "saveContinent()";
 		logger.info(METHOD_NAME + "start : ");
@@ -86,13 +87,13 @@ public class ContinentManagerImpl {
 				continent.setContinentImg(exisitingContinent.getContinentImg());
 				continent = continentRepository.save(continent);
 			}else {
-				throw new NeverStopExcpetion("Continent Not Found");
+				throw new BusinessException("Continent Not Found");
 			}
 			//continent.setContinentImg(fileUrl+defaultFilePath);
 			
 			
 		}catch (DataIntegrityViolationException e) {
-			throw new NeverStopExcpetion("Continent Name Already Exist");
+			throw new BusinessException("Continent Name Already Exist");
 		    
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -104,7 +105,7 @@ public class ContinentManagerImpl {
 	}
 	
 	
-	public Continent saveContinentImage(String continentId, MultipartFile continentImg) throws NeverStopExcpetion {
+	public Continent saveContinentImage(String continentId, MultipartFile continentImg) throws BusinessException {
 
 		String METHOD_NAME = "saveContinentImage()";
 		logger.info(METHOD_NAME + "start : ");
@@ -126,11 +127,11 @@ public class ContinentManagerImpl {
 						}
 					}else{
 						//continent.setContinentImg(fileUrl+defaultFilePath);
-						throw new NeverStopExcpetion("Continent Image not Found");
+						throw new BusinessException("Continent Image not Found");
 					}
 				continent = continentRepository.save(continent);
 			}else {
-				throw new NeverStopExcpetion("Invalid Continent id");
+				throw new BusinessException("Invalid Continent id");
 			}
 		
 		} catch (RuntimeException re) {
@@ -147,7 +148,7 @@ public class ContinentManagerImpl {
 	}
 	
 	
-	public Continent deleteContinentImage(String continentId) throws NeverStopExcpetion { 
+	public Continent deleteContinentImage(String continentId) throws BusinessException, Throwable { 
 		
 		Continent continent = null;
 		Optional<Continent> continentDetails = continentRepository.findById(continentId);
@@ -157,15 +158,15 @@ public class ContinentManagerImpl {
 					continent = continentDetails.get();
 					continent.setContinentImg(null);
 					try{
-				commonUtil.removeImageFile(filePath);
+				       commonUtil.removeImageFile(filePath);
 				}catch(Exception e){
 					e.printStackTrace();
-					throw new NeverStopExcpetion("Unable to Delete Image");
+					throw new BusinessException("Unable to Delete Image");
 				}
 			continentRepository.save(continent);
 			
 		}else{
-			throw new NeverStopExcpetion("Continent Not Found");
+			throw new BusinessException("Continent Not Found");
 		}
 		return continent;	
 	}
@@ -214,7 +215,7 @@ public class ContinentManagerImpl {
 		return continent;
 	}
 
-	public List<Continent> searchbyName(String continentName) throws NeverStopExcpetion 
+	public List<Continent> searchbyName(String continentName) throws BusinessException 
 	{
 		String METHOD_NAME = "searchbyName()";
 		logger.info(METHOD_NAME + "start : ");
@@ -224,7 +225,7 @@ public class ContinentManagerImpl {
 
 			contList = continentRepository.searchbyName(continentName);
 			if (null == contList || contList.isEmpty()) {
-				throw new NeverStopExcpetion("Continent Not Found");
+				throw new BusinessException("Continent Not Found");
 			}
 
 		} catch (RuntimeException re) {
@@ -235,5 +236,5 @@ public class ContinentManagerImpl {
 		logger.info(METHOD_NAME + "END");
 		return contList;
 	}
-
-}
+	
+	}

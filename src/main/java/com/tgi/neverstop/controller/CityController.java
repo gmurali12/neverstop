@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tgi.neverstop.exception.BusinessException;
 import com.tgi.neverstop.manager.CityManagerImpl;
 import com.tgi.neverstop.model.City;
 import com.tgi.neverstop.model.Continent;
@@ -46,26 +47,12 @@ public class CityController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<City> cityList = cityManager.getAllCity();
-			responseObjectsMap.put("CityList", cityList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to select City.";
-		} catch (Throwable e) {
-			msg = "Unable to select City.";
-			logger.error(e.getMessage());
-		}
-
+		List<City> cityList = cityManager.getAllCity();
+		responseObjectsMap.put("CityList", cityList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+	
 
 	}
 	
@@ -78,27 +65,12 @@ public class CityController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<City> cityList = cityManager.searchbyName(cityName);
-			responseObjectsMap.put("CityList", cityList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = e.getMessage();
-			logger.error(e.getMessage());
-		} 
-		
-
+		List<City> cityList = cityManager.searchbyName(cityName);
+		responseObjectsMap.put("CityList", cityList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 
 	}
 
@@ -111,28 +83,12 @@ public class CityController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			List<City> cityList = cityManager.getCityByStateId(stateId);
-			
-			responseObjectsMap.put("CityList", cityList);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to select City.";
-		} catch (Throwable e) {
-			msg = "Unable to select City.";
-			logger.error(e.getMessage());
-		}
-
+		List<City> cityList = cityManager.getCityByStateId(stateId);
+		responseObjectsMap.put("CityList", cityList);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 
 	@PostMapping("/saveCity")
@@ -144,27 +100,12 @@ public class CityController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			city = cityManager.saveCity(city);
-			responseObjectsMap.put("CityVO", city);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to save City.";
-		} catch (Throwable e) {
-			msg = "Unable to save City.";
-			logger.error(e.getMessage());
-		}
-
+		city = cityManager.saveCity(city);
+		responseObjectsMap.put("CityVO", city);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 	
 	@PostMapping("/saveCityImage")
@@ -173,36 +114,21 @@ public class CityController extends BaseController {
 
 		String METHOD_NAME = "saveCityImage()";
 		logger.info(METHOD_NAME + "start : ");
-
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 		City city;
-
-		try {
-			city = cityManager.saveCityImage(cityId,cityImg);
-			responseObjectsMap.put("CityVO", city);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to save city.";
-			logger.error(e.getMessage());
-		}
-
+		city = cityManager.saveCityImage(cityId,cityImg);
+		responseObjectsMap.put("CityVO", city);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 
 	}
 
 	@PostMapping("/deleteCityImage")
-	public ResponseEntity<?> deleteCityImage(@RequestPart String cityId) {
+	public ResponseEntity<?> deleteCityImage(@RequestPart String cityId) throws BusinessException, Throwable {
 
 		String METHOD_NAME = "updateCity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -211,27 +137,12 @@ public class CityController extends BaseController {
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
 		City city;
-
-		try {
-			city = cityManager.deleteCityImage(cityId);
-			responseObjectsMap.put("CityVO", city);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = re.getMessage();
-		} catch (Throwable e) {
-			msg = "Unable to Delete city.";
-			logger.error(e.getMessage());
-		}
-
+		city = cityManager.deleteCityImage(cityId);
+		responseObjectsMap.put("CityVO", city);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
 	
 	@PostMapping("/updateCity")
@@ -243,27 +154,12 @@ public class CityController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			city = cityManager.updateCity(city);
-			responseObjectsMap.put("CityVO", city);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to save City.";
-		} catch (Throwable e) {
-			msg = "Unable to save City.";
-			logger.error(e.getMessage());
-		}
-
+		city = cityManager.updateCity(city);
+		responseObjectsMap.put("CityVO", city);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
-
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+	
 	}
 
 	@PostMapping("/getCityById")
@@ -275,25 +171,12 @@ public class CityController extends BaseController {
 		String msg = null;
 		Map<String, Object> responseObjectsMap = new HashMap<String, Object>();
 		ResponseVO responseVO = new ResponseVO();
-
-		try {
-			City city = cityManager.findById(cityId);
-			responseObjectsMap.put("CityVO", city);
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			msg = "Unable to save City.";
-		} catch (Throwable e) {
-			msg = "Unable to save City.";
-			logger.error(e.getMessage());
-		}
-
+		City city = cityManager.findById(cityId);
+		responseObjectsMap.put("CityVO", city);
 		logger.info(METHOD_NAME + "END");
-		if (null == msg) {
-			responseVO = createServiceResponse(responseObjectsMap);
-			return ResponseEntity.ok().body(responseVO);
-		} else {
-			responseVO = createServiceResponseError(responseObjectsMap, msg);
-			return ResponseEntity.ok().body(responseVO);
-		}
+		responseVO = createServiceResponse(responseObjectsMap);
+		return ResponseEntity.ok().body(responseVO);
+		
 	}
+	
 }

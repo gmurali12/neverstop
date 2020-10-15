@@ -13,6 +13,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.tgi.neverstop.exception.BusinessException;
 import com.tgi.neverstop.exception.NeverStopExcpetion;
 import com.tgi.neverstop.model.City;
 import com.tgi.neverstop.model.Continent;
@@ -45,7 +46,7 @@ public class CityManagerImpl {
 	@Value("${neverstop.defaultimages.directory}")
 	private String defaultFilePath;
 
-	public City saveCity(@Valid City city) throws NeverStopExcpetion {
+	public City saveCity(@Valid City city) throws BusinessException {
 
 		String METHOD_NAME = "saveCity()";
 		logger.info(METHOD_NAME + "start : ");
@@ -59,7 +60,7 @@ public class CityManagerImpl {
 			city = cityRepository.save(city);
 			
 		}catch (DataIntegrityViolationException e) {
-			throw new NeverStopExcpetion("City Name Already Exist");
+			throw new BusinessException("City Name Already Exist");
 		    
 		
 		} catch (RuntimeException re) {
@@ -75,7 +76,7 @@ public class CityManagerImpl {
 		return city;
 	}
 	
-	public City saveCityImage(String cityId, MultipartFile cityImg) throws NeverStopExcpetion {
+	public City saveCityImage(String cityId, MultipartFile cityImg) throws BusinessException {
 
 		String METHOD_NAME = "saveCityImage()";
 		logger.info(METHOD_NAME + "start : ");
@@ -103,7 +104,7 @@ public class CityManagerImpl {
 					
 				city = cityRepository.save(city);
 			}else {
-				throw new NeverStopExcpetion("Invalid city id");
+				throw new BusinessException("Invalid city id");
 			}
 		
 		} catch (RuntimeException re) {
@@ -119,7 +120,7 @@ public class CityManagerImpl {
 		return city;
 	}
 	
-public City deleteCityImage(String cityId) throws NeverStopExcpetion { 
+public City deleteCityImage(String cityId) throws BusinessException, Throwable { 
 		
 		City city = null;
 		Optional<City> cityDetails = cityRepository.findById(cityId);
@@ -131,12 +132,12 @@ public City deleteCityImage(String cityId) throws NeverStopExcpetion {
 			try{
 			commonUtil.removeImageFile(filePath);
 			}catch(Exception e){
-				throw new NeverStopExcpetion("Unable to Delete Image");
+				throw new BusinessException("Unable to Delete Image");
 			}
 			cityRepository.save(city);
 			
 		}else{
-			throw new NeverStopExcpetion("City Not Found");
+			throw new BusinessException("City Not Found");
 		}
 		return city;
 	}
@@ -176,7 +177,7 @@ public City deleteCityImage(String cityId) throws NeverStopExcpetion {
 				city.setCityImg(exisitingCity.getCityImg());
 				city = cityRepository.save(city);
 			}else {
-				throw new NeverStopExcpetion("City Not Found");
+				throw new BusinessException("City Not Found");
 			}
 
 		} catch (RuntimeException re) {
@@ -236,7 +237,7 @@ public City deleteCityImage(String cityId) throws NeverStopExcpetion {
 		return city;
 	}
 
-	public List<City> searchbyName(String cityName) throws NeverStopExcpetion {
+	public List<City> searchbyName(String cityName) throws BusinessException {
 		String METHOD_NAME = "searchbyName()";
 		logger.info(METHOD_NAME + "start : ");
 		List<City> cityList = null;
@@ -245,7 +246,7 @@ public City deleteCityImage(String cityId) throws NeverStopExcpetion {
 
 			cityList = cityRepository.searchbyName(cityName);
 			if (null == cityList || cityList.isEmpty()) {
-				throw new NeverStopExcpetion("City Not Found");
+				throw new BusinessException("City Not Found");
 			}
 
 		} catch (RuntimeException re) {
@@ -256,4 +257,6 @@ public City deleteCityImage(String cityId) throws NeverStopExcpetion {
 		logger.info(METHOD_NAME + "END");
 		return cityList;
 	}
+	
+
 }

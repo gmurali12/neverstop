@@ -48,15 +48,15 @@ public class UserManagerImpl {
 	@Value("${neverstop.user.exist}")
 	private String userExistErroMsg;
 
-	public List<User> getAllUsers() {
+	public List<User> getAllUsers() throws BusinessException {
 
 		String METHOD_NAME = "getAllUsers()";
 		logger.info(METHOD_NAME + "start : ");
 		List<User> userList = null;
-
+		
 		try {
 
-			userList = userRepository.findAll();
+			userList = userRepository.findAll();				
 
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
@@ -67,7 +67,7 @@ public class UserManagerImpl {
 			logger.error(e.getMessage());
 
 		}
-		logger.info(METHOD_NAME + "END");
+		logger.info(METHOD_NAME + "END");		
 		return userList;
 	}
 
@@ -124,7 +124,7 @@ public class UserManagerImpl {
 		logger.info(METHOD_NAME + "End: ");
 	}
 
-	public @Valid User updateUser(@Valid User user) {
+	public @Valid User updateUser(@Valid User user)throws BusinessException {
 		String METHOD_NAME = "updateUser()";
 		logger.info(METHOD_NAME + "start : ");
 
@@ -146,7 +146,7 @@ public class UserManagerImpl {
 		return user;
 	}
 	
-	public User forgetPassword(String userName) throws NeverStopExcpetion 
+	public User forgetPassword(String userName) throws BusinessException 
 	{
 		String METHOD_NAME = "forgetPassword()";
 		logger.info(METHOD_NAME + "start : ");
@@ -162,19 +162,20 @@ public class UserManagerImpl {
 				commonUtil.sendSimpleMessage(user.getUsername(),password);
 			} catch (MessagingException | IOException e) {
 				e.printStackTrace();
-				throw new NeverStopExcpetion("Error While Sending Email. Pleasse Try Again After Some Time!!!");
+				throw new BusinessException("Error While Sending Email. Pleasse Try Again After Some Time!!!");
 			}
 		} else {
-			throw new NeverStopExcpetion("Invalid Username");
+			throw new BusinessException("Invalid Username");
 		}
 		logger.info(METHOD_NAME + "END");
 		
 		return user;
 	}
 
-	public User updatePassword(String username, String newPassword) throws NeverStopExcpetion 
+	public User updatePassword(String username, String newPassword) throws BusinessException 
 	
-	{ User user=null;
+	{
+		User user=null;
 		Optional<User> userDetail = userRepository.findByUsername(username);
 		if (userDetail != null && userDetail.isPresent())
 		{
@@ -182,41 +183,41 @@ public class UserManagerImpl {
 			user.setPassword(encoder.encode(newPassword));
 			user = userRepository.save(user);
 		} else {
-			throw new NeverStopExcpetion("Invalid Username");
+			throw new BusinessException("Invalid Username");
 		}
 		return user;
 	}
 	
-	public User findById(String userId) {
+	public User findById(String userId) throws BusinessException  {
 		String METHOD_NAME = "findById()";
 		logger.info(METHOD_NAME + "start : ");
 
 		User user = null;
-		try {
-
+	     try {
 			user = userRepository.getOne(userId);
-
+	
 		} catch (RuntimeException re) {
 			logger.error(re.getMessage());
 			re.printStackTrace();
 
-		} catch (Throwable e) {
-			e.printStackTrace();
+	    } catch (Throwable e) {
+	     	e.printStackTrace();
 			logger.error(e.getMessage());
-
-		}
+           }
 		logger.info(METHOD_NAME + "END");
 		return user;
 	}
 
-	public User updateUserProfile(String userId, String name) throws NeverStopExcpetion {
+	public User updateUserProfile(String userId, String name) throws BusinessException {
 		User user = userRepository.getOne(userId);
+  
 		if (user != null)
 		{
 			user.setName(name);
 			user = userRepository.save(user);
 		} else {
-			throw new NeverStopExcpetion("Invalid Username");
+			
+			throw new BusinessException("Invalid UserId");
 		}
 		return user;
 	}
