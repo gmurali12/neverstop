@@ -220,21 +220,20 @@ public City deleteCityImage(String cityId) throws BusinessException, Throwable {
 		logger.info(METHOD_NAME + "start : ");
 
 		City city = null;
-		try {
+		
+		city = cityRepository.getOne(cityId);
 
-			city = cityRepository.getOne(cityId);
-
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			re.printStackTrace();
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-
+		System.out.println(city.getCityName());
+		    
+		if(city!=null && city.getId()!=null)
+		{
+			logger.info(METHOD_NAME + "END");
+			return city;
 		}
-		logger.info(METHOD_NAME + "END");
-		return city;
+		else	
+		{
+			throw new BusinessException("Id is not found");
+		}
 	}
 
 	public List<City> searchbyName(String cityName) throws BusinessException {

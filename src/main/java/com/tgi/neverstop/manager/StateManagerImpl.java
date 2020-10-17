@@ -221,21 +221,20 @@ public State deleteStateImage(String stateId) throws BusinessException, NeverSto
 		logger.info(METHOD_NAME + "start : ");
 
 		State state = null;
-		try {
-
-			state = stateRepository.getOne(stateId);
-
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			re.printStackTrace();
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-
+	
+		state = stateRepository.getOne(stateId);
+			
+		System.out.println(state.getStateName());
+		    
+		if(state!=null && state.getId()!=null)
+		{
+			logger.info(METHOD_NAME + "END");
+			return state;
 		}
-		logger.info(METHOD_NAME + "END");
-		return state;
+		else	
+		{
+			throw new BusinessException("Id is not found");
+		}
 	}
 
 	public List<State> searchbyName(String stateName) throws BusinessException {

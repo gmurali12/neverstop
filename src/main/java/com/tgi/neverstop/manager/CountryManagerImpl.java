@@ -215,22 +215,21 @@ public Country deleteCountryImage(String countryId) throws BusinessException, Th
 		logger.info(METHOD_NAME + "start : ");
 
 		Country country = null;
-		try {
-
-			country = countryRepository.getOne(countryId);
-
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			re.printStackTrace();
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-
+	
+		country = countryRepository.getOne(countryId);
+		System.out.println(country.getCountryName());
+		    
+		if(country!=null && country.getId()!=null)
+		{
+			logger.info(METHOD_NAME + "END");
+			return country;
 		}
-		logger.info(METHOD_NAME + "END");
-		return country;
+		else	
+		{
+			throw new BusinessException("ID not found");
+		}
 	}
+
 
 	public List<Country> searchbyName(String countryName) throws BusinessException {
 		String METHOD_NAME = "searchbyName()";

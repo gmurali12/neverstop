@@ -194,26 +194,28 @@ public class ContinentManagerImpl {
 	}
 
 	public Continent findById(String continentId) {
-		String METHOD_NAME = "findById()";
+	   	String METHOD_NAME = "findById()";
 		logger.info(METHOD_NAME + "start : ");
 
-		Continent continent = null;
-		try {
+	    Continent continent = null;
 
-			continent = continentRepository.getOne(continentId);
+		continent = continentRepository.getOne(continentId);
+			 
 
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			re.printStackTrace();
-
-		} catch (Throwable e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-
+		System.out.println(continent.getContinentName());
+		    
+		if(continent!=null && continent.getId()!=null)
+		{
+			logger.info(METHOD_NAME + "END");
+			return continent;
 		}
-		logger.info(METHOD_NAME + "END");
-		return continent;
+		else	
+		{
+			throw new BusinessException("ContinentID not found");
+		}
+	
 	}
+
 
 	public List<Continent> searchbyName(String continentName) throws BusinessException 
 	{

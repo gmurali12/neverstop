@@ -191,21 +191,21 @@ public class UserManagerImpl {
 	public User findById(String userId) throws BusinessException  {
 		String METHOD_NAME = "findById()";
 		logger.info(METHOD_NAME + "start : ");
-
 		User user = null;
-	     try {
-			user = userRepository.getOne(userId);
-	
-		} catch (RuntimeException re) {
-			logger.error(re.getMessage());
-			re.printStackTrace();
-
-	    } catch (Throwable e) {
-	     	e.printStackTrace();
-			logger.error(e.getMessage());
-           }
-		logger.info(METHOD_NAME + "END");
-		return user;
+	    user = userRepository.getOne(userId);
+	    System.out.println(user.getName());
+	    
+		if(user!=null && user.getId()!=null)
+		{
+			logger.info(METHOD_NAME + "END");
+			return user;
+		}
+		else	
+		{
+			throw new BusinessException("UserID not found");
+		}
+				
+		
 	}
 
 	public User updateUserProfile(String userId, String name) throws BusinessException {
